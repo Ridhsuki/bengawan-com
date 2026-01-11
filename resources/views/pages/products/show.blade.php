@@ -5,8 +5,8 @@
             <div class="w-full lg:w-1/2">
                 <div class="relative w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden group">
                     <div id="sliderImage" class="w-full h-full">
-                        <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=1000&q=80"
-                            class="w-full h-full object-cover transition-opacity duration-500" alt="Product Image">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/500x300.svg?text=No+Image' }}"
+                            class="w-full h-full object-cover transition-opacity duration-500" alt="{{ $product->name }}">
                     </div>
 
                     <button id="prevBtn"
@@ -22,16 +22,21 @@
             </div>
 
             <div class="w-full lg:w-1/2 flex flex-col justify-center">
-                <h1 class="text-3xl md:text-4xl font-bold text-black mb-6">Asus VivoBook X421EQ</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-black mb-6">{{ $product->name }}</h1>
 
                 <p class="text-gray-600 text-lg leading-relaxed mb-8">
-                    AMD Ryzen 3 7320U (4 Cores – 8 Threads) 2.4GHz Upto 4.1GHz | Layar 14" FHD | Radeon Graphics | SSD
-                    512GB | RAM 8GB LPDDR5 | WiFi | Bluetooth | Webcam | Backlight Keyboard | Fingerprint | OS Windows
-                    11 Original | Office Home & Student | Garansi Resmi Asus 2 Tahun
+                    {{ $product->description }}
                 </p>
 
                 <div class="mb-2">
-                    <span class="text-4xl md:text-5xl font-bold text-black">Rp4.250.000</span>
+                    <span class="text-4xl md:text-5xl font-bold text-black">
+                        @if ($product->has_discount)
+                            <span class="line-through text-gray-500">{{ $product->formattedPrice }}</span>
+                            <span class="text-red-500">{{ $product->formattedDiscountPrice }}</span>
+                        @else
+                            {{ $product->formattedPrice }}
+                        @endif
+                    </span>
                 </div>
 
                 <div class="text-sm font-bold text-black mb-10">
@@ -39,24 +44,20 @@
                 </div>
 
                 <div class="flex gap-8 items-center">
-                    <a href="#" class="transform hover:scale-110 transition duration-300">
-                        <i class="fa-brands fa-whatsapp text-whatsapp text-6xl"></i>
+                    <a href="https://wa.me/<?= $product->whatsapp_link ?>"
+                        class="transform hover:scale-110 transition duration-300">
+                        <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="WhatsApp" class="h-12 md:h-16">
                     </a>
 
-                    <a href="#"
+                    <a href="{{ $product->link_shopee }}"
                         class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
-                        <div class="text-shopee text-6xl">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                        </div>
-                        <span class="text-xs font-bold text-shopee">Shopee</span>
+                        <img src="{{ asset('assets/img/shopee.png') }}" alt="Shopee" class="h-12 md:h-16">
                     </a>
 
-                    <a href="#"
+                    <a href="{{ $product->link_tokopedia }}"
                         class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
-                        <div class="text-tokopedia text-6xl">
-                            <i class="fa-solid fa-shop"></i>
-                        </div>
-                        <span class="text-xs font-bold text-tokopedia">tokopedia</span>
+                        <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="Tokopedia"
+                            class="h-12 md:h-16">
                     </a>
                 </div>
             </div>

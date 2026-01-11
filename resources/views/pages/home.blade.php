@@ -37,103 +37,32 @@
     <section class="container mx-auto px-4 py-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-brand-blue">Produk Terbaru</h2>
-            <a href="#" class="text-brand-blue hover:underline font-medium decoration-2 underline-offset-4">Lihat
+            <a href="{{ route('products.index') }}"
+                class="text-brand-blue hover:underline font-medium decoration-2 underline-offset-4">Lihat
                 Semua</a>
         </div>
 
         <div id="productContainer"
             class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar">
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
+            @foreach ($products as $product)
+                <div
+                    class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
+                    <div class="h-48 skeleton w-full relative overflow-hidden">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/500x300.svg?text=No+Image' }}"
+                            alt="{{ $product->name }}" loading="lazy" decoding="async"
+                            class="w-full h-full object-cover transition-opacity duration-700 opacity-0"
+                            onload="this.classList.remove('opacity-0')"
+                            onerror="this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0')">
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="font-bold text-lg mb-1 line-clamp-2">{{ $product->name }}</h3>
+                        <p class="font-bold text-xl mb-4">{{ $product->formatted_price }}</p>
+                        <a href="{{ route('product.show', $product->slug) }}"
+                            class="text-center mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
+                            Produk</a>
+                    </div>
                 </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">Asus VivoBook X421EQ</h3>
-                    <p class="font-bold text-xl mb-4">Rp4.250.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">Acer Aspire A314 - 23M</h3>
-                    <p class="font-bold text-xl mb-4">Rp3.650.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1593642632823-8f78536788c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">Asus Rog Strix G531GT</h3>
-                    <p class="font-bold text-xl mb-4">Rp7.950.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1588872657578-a83f79636e62?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">Lenovo Ideapad Gaming 3</h3>
-                    <p class="font-bold text-xl mb-4">Rp8.650.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">MacBook Pro M1 2020</h3>
-                    <p class="font-bold text-xl mb-4">Rp14.250.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
-            <div
-                class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                <div class="h-48 bg-gray-200 w-full relative">
-                    <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-1 line-clamp-2">HP Pavilion 15 Ryzen</h3>
-                    <p class="font-bold text-xl mb-4">Rp5.950.000</p>
-                    <button
-                        class="mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
-                        Produk</button>
-                </div>
-            </div>
-
+            @endforeach
         </div>
 
         <div class="flex justify-center gap-4 mt-8 relative items-center">

@@ -5,31 +5,56 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $products = Product::where('is_active', true)->latest()->take(8)->get();
+        $products = Product::active()->latest()->take(6)->get();
+
         return view('pages.home', compact('products'));
     }
 
     public function products(Request $request)
     {
-        $query = Product::where('is_active', true);
+        $categories = Category::withCount('products')->get();
 
-        if ($request->has('category')) {
-            $query->whereHas('category', fn($q) => $q->where('slug', $request->category));
-        }
-
-        if ($request->has('q')) {
-            $query->where('name', 'like', '%' . $request->q . '%');
-        }
-
-        $products = $query->paginate(12);
-        $categories = Category::all();
+        $products = Product::active()
+            ->when($request->category, function (Builder $query, $slug) {
+                $query->whereHas('category', function (Builder $q) use ($slug) {
+                    $q->where('slug', $slug);
+                });
+            })
+            ->when($request->price, function (Builder $query, $price) {
+                switch ($price) {
+                    case 'lt_2m':
+                        $query->where('price', '<', 2000000);
+                        break;
+                    case 'lt_5m':
+                        $query->where('price', '<', 5000000);
+                        break;
+                    case 'lt_10m':
+                        $query->where('price', '<', 10000000);
+                        break;
+                    case 'lt_20m':
+                        $query->where('price', '<', 20000000);
+                        break;
+                    case 'gt_20m':
+                        $query->where('price', '>=', 20000000);
+                        break;
+                }
+            })
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
         return view('pages.products.index', compact('products', 'categories'));
+    }
+
+    public function productDetail(Product $product)
+    {
+        return view('pages.products.show', compact('product'));
     }
 
     public function discount()
@@ -44,19 +69,17 @@ class HomeController extends Controller
         // return view('discount', compact('products'));
     }
 
-    public function show()
-    // public function show(Product $product)
+    public function show(Product $product)
     {
-        return view('pages.products.show');
-        // return view('pages.products.show', compact('product'));
+        return view('pages.products.show', compact('product'));
     }
 
     public function service()
     {
-        return view('pages.services'); // Static page, text bisa ambil dari $company->about
+        return view('pages.services');
     }
     public function about()
     {
-        return view('pages.about'); // Static page, text bisa ambil dari $company->about
+        return view('pages.about');
     }
 }

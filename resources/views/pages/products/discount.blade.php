@@ -21,18 +21,16 @@
 
                     <div class="mt-auto flex justify-between items-end px-2">
                         <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
+                            <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
+                                class="object-contain group-hover/icon:scale-110 transition">
                         </a>
                         <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
+                             <img src="{{ asset('assets/img/shopee.png') }}" alt="shopee logo"
+                                class="object-contain group-hover/icon:scale-110 transition">
                         </a>
                         <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
+                             <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="tokopedia logo"
+                                class="object-contain group-hover/icon:scale-110 transition">
                         </a>
                     </div>
                 </div>
