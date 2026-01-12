@@ -76,8 +76,7 @@ class HomeController extends Controller
             ->latest()
             ->paginate(12);
 
-        return view('pages.products.discount');
-        // return view('discount', compact('products'));
+        return view('pages.products.discount', compact('products'));
     }
 
     public function show(Product $product)

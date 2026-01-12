@@ -2,274 +2,71 @@
     <main class="container mx-auto px-4 py-8 flex-grow">
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse($products as $product)
+                <div
+                    class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
+                    <a href="{{ route('products.show', $product->slug) }}" class="block relative">
+                        <div class="h-48 skeleton bg-gray-200 w-full relative overflow-hidden">
+                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('assets/img/no-image.webp') }}"
+                                alt="{{ $product->name }}" loading="lazy" decoding="async"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-600"
+                                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton');"
+                                onerror="this.onerror=null; this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton');">
+                            @if ($product->has_discount)
+                                <div
+                                    class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                                    {{ $product->discount_percentage }}% OFF
+                                </div>
+                            @endif
+                        </div>
+                    </a>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <a href="{{ route('products.show', $product->slug) }}" class="block">
+                            <h3
+                                class="font-bold text-lg mb-2 leading-snug line-clamp-2 hover:text-brand-blue transition-colors">
+                                {{ $product->name }}
+                            </h3>
+                        </a>
+                        <div class="flex items-center gap-2 mb-6">
+                            <span
+                                class="text-gray-400 text-sm line-through decoration-gray-400">{{ $product->formatted_price }}</span>
+                            <span
+                                class="font-bold text-lg text-gray-900">{{ $product->formatted_discount_price }}</span>
+                        </div>
 
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    <div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">HOT
+                        <div class="mt-auto flex justify-between items-end px-2">
+                            <a href="#" class="flex flex-col items-center gap-1 group/icon">
+                                <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
+                                    class="object-contain group-hover/icon:scale-110 transition">
+                            </a>
+                            <a href="{{ $product->link_shopee }}" target="_blank"
+                                class="flex flex-col items-center gap-1 group/icon">
+                                <img src="{{ asset('assets/img/shopee.png') }}" alt="shopee logo"
+                                    class="object-contain group-hover/icon:scale-110 transition">
+                            </a>
+                            <a href="{{ $product->link_tokopedia }}" target="_blank"
+                                class="flex flex-col items-center gap-1 group/icon">
+                                <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="tokopedia logo"
+                                    class="object-contain group-hover/icon:scale-110 transition">
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Asus VivoBook X421EQ</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp4.250.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp4.250.000</span>
+            @empty
+                <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                    <div class="bg-gray-100 p-6 rounded-full mb-4">
+                        <i class="fa-solid fa-tag text-4xl text-gray-400"></i>
                     </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
-                                class="object-contain group-hover/icon:scale-110 transition">
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                             <img src="{{ asset('assets/img/shopee.png') }}" alt="shopee logo"
-                                class="object-contain group-hover/icon:scale-110 transition">
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                             <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="tokopedia logo"
-                                class="object-contain group-hover/icon:scale-110 transition">
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-gray-700">Belum Ada Promo</h3>
+                    <p class="text-gray-500 mb-6">Nantikan penawaran menarik kami segera!</p>
+                    <a href="{{ route('products.index') }}" class="text-brand-blue hover:underline font-bold">
+                        Lihat Semua Produk
+                    </a>
                 </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Acer Aspire A314 - 23M</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp3.650.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp3.650.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593642632823-8f78536788c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Asus Rog Strix G531GT</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp7.950.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp7.950.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1588872657578-a83f79636e62?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Lenovo Ideapad Gaming 3</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp8.650.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp8.650.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Asus VivoBook X421EQ</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp4.250.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp4.250.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop"
-                        class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Acer Aspire A314 - 23M</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp3.650.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp3.650.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593642632823-8f78536788c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop"
-                        class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Asus Rog Strix G531GT</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp7.950.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp7.950.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
-                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1588872657578-a83f79636e62?auto=format&fit=crop&w=500&q=80"
-                        alt="Laptop"
-                        class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                </div>
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-lg mb-2 leading-snug line-clamp-2">Lenovo Ideapad Gaming 3</h3>
-
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="text-gray-400 text-sm line-through decoration-gray-400">Rp8.650.000</span>
-                        <span class="font-bold text-lg text-gray-900">Rp8.650.000</span>
-                    </div>
-
-                    <div class="mt-auto flex justify-between items-end px-2">
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-brands fa-whatsapp text-whatsapp text-3xl group-hover/icon:scale-110 transition"></i>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-bag-shopping text-shopee text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-shopee">Shopee</span>
-                        </a>
-                        <a href="#" class="flex flex-col items-center gap-1 group/icon">
-                            <i
-                                class="fa-solid fa-shop text-tokopedia text-3xl group-hover/icon:scale-110 transition"></i>
-                            <span class="text-[10px] font-bold text-tokopedia">tokopedia</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+            @endforelse
+        </div>
+        <div class="flex justify-center mt-4">
+            {{ $products->links() }}
         </div>
     </main>
 </x-app-layout>

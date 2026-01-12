@@ -57,7 +57,7 @@
                     <div class="p-4 flex flex-col flex-grow">
                         <h3 class="font-bold text-lg mb-1 line-clamp-2">{{ $product->name }}</h3>
                         <p class="font-bold text-xl mb-4">{{ $product->formatted_price }}</p>
-                        <a href="{{ route('product.show', $product->slug) }}"
+                        <a href="{{ route('products.show', $product->slug) }}"
                             class="text-center mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition">Cek
                             Produk</a>
                     </div>
