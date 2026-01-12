@@ -34,7 +34,7 @@
                                 class="font-bold text-lg text-gray-900">{{ $product->formatted_discount_price }}</span>
                         </div>
 
-                        <div class="mt-auto flex justify-between items-end px-2">
+                        <div class="mt-auto flex items-end justify-center gap-6 px-2">
                             <a href="#" class="flex flex-col items-center gap-1 group/icon">
                                 <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
                                     class="object-contain group-hover/icon:scale-110 transition">

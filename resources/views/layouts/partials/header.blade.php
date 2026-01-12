@@ -18,7 +18,7 @@
                 class="bg-white w-full py-2.5 px-5 rounded-full outline-none text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-300 transition">
 
             <button @click.prevent="goToSearch()"
-                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-800 transition">
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-800 transition cursor-pointer">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
             </button>
 
@@ -47,13 +47,24 @@
         </div>
 
         <div class="hidden md:flex items-center text-white gap-2">
-            <a href="{{ route('filament.admin.auth.login') }}">
-                <i class="fa-regular fa-user text-2xl"></i>
-            </a>
-            <div class="text-xs text-right leading-tight">
-                <div class="font-bold">WhatsApp</div>
-                <div>085799599723</div>
-            </div>
+            @auth
+                <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex items-center gap-2 group">
+                    <i class="fa-solid fa-user text-2xl transition group-hover:text-yellow-300"></i>
+                    <span class="hidden sm:block text-sm font-medium group-hover:text-yellow-300">
+                        Dashboard
+                    </span>
+                </a>
+            @endauth
+
+            @guest
+                <a href="{{ route('filament.admin.auth.login') }}" class="flex items-center gap-2 group">
+                    <i class="fa-regular fa-user text-2xl transition group-hover:text-yellow-300"></i>
+                </a>
+                <div class="text-xs text-right leading-tight">
+                    <div class="font-bold">WhatsApp</div>
+                    <div>085799599723</div>
+                </div>
+            @endguest
         </div>
     </div>
 </header>
