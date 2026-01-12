@@ -47,12 +47,12 @@
             @foreach ($products as $product)
                 <div
                     class="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] snap-start bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                    <div class="h-48 skeleton w-full relative overflow-hidden">
-                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/500x300.svg?text=No+Image' }}"
+                    <div class="h-48 skeleton w-full relative overflow-hidden bg-gray-200">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('assets/img/no-image.webp') }}"
                             alt="{{ $product->name }}" loading="lazy" decoding="async"
                             class="w-full h-full object-cover transition-opacity duration-700 opacity-0"
-                            onload="this.classList.remove('opacity-0')"
-                            onerror="this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0')">
+                            onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton');"
+                            onerror="this.onerror=null; this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton');">
                     </div>
                     <div class="p-4 flex flex-col flex-grow">
                         <h3 class="font-bold text-lg mb-1 line-clamp-2">{{ $product->name }}</h3>
@@ -91,7 +91,7 @@
                 <h3 class="font-bold text-lg uppercase mb-1">PROMO</h3>
                 <p class="text-sm text-gray-200 mb-4">Promo Laptop Terbaru</p>
                 <div>
-                    <a href="#"
+                    <a href="{{ route('discount') }}"
                         class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
                         Cek disini
                     </a>
@@ -103,7 +103,7 @@
                 <h3 class="font-bold text-lg uppercase mb-1">PRICELIST</h3>
                 <p class="text-sm text-gray-200 mb-4">Laptop / Notebook</p>
                 <div>
-                    <a href="#"
+                    <a href="{{ route('products.index') }}"
                         class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
                         Cek disini
                     </a>
@@ -115,7 +115,7 @@
                 <h3 class="font-bold text-lg uppercase mb-1">GAMING</h3>
                 <p class="text-sm text-gray-200 mb-4">All Laptop GAMING</p>
                 <div>
-                    <a href="#"
+                    <a href="{{ route('products.index') }}?category=laptop-gaming"
                         class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
                         Cek disini
                     </a>

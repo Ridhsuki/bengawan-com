@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -28,9 +29,30 @@ class ProductForm
                             $set('slug', Str::slug($state));
                         }),
                     TextInput::make('slug')->required(),
-                    FileUpload::make('image')->directory('products')->image(),
                     RichEditor::make('description')->columnSpanFull(),
                 ]),
+                FileUpload::make('image')
+                    ->label('Thumbnail Utama (Cover)')
+                    ->image()
+                    ->disk('public')
+                    ->visibility('public')
+                    ->directory('products')
+                    ->required(),
+
+                Repeater::make('images')
+                    ->relationship()
+                    ->label('Galeri Tambahan')
+                    ->schema([
+                        FileUpload::make('image')
+                            ->image()
+                            ->disk('public')
+                            ->visibility('public')
+                            ->directory('products/gallery')
+                            ->required(),
+                    ])
+                    ->grid(2)
+                    ->defaultItems(0)
+                    ->addActionLabel('Tambah Foto Galeri'),
 
                 Section::make('Harga & Stok')->schema([
                     TextInput::make('price')->numeric()->prefix('Rp')->required(),

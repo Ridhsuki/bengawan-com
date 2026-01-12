@@ -112,11 +112,11 @@
                     <div
                         class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
                         <div class="h-48 skeleton w-full relative overflow-hidden bg-gray-200">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/500x300.svg?text=No+Image' }}"
+                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('assets/img/no-image.webp') }}"
                                 alt="{{ $product->name }}" loading="lazy" decoding="async"
                                 class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 opacity-0"
-                                onload="this.classList.remove('opacity-0')"
-                                onerror="this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0')">
+                                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton');"
+                                onerror="this.onerror=null;this.src='{{ asset('assets/img/no-image.webp') }}';this.classList.remove('opacity-0');this.parentElement.classList.remove('skeleton');">
                         </div>
                         <div class="p-4 flex flex-col flex-grow">
                             <h3 class="font-bold text-lg mb-1 leading-snug">{{ $product->name }}</h3>

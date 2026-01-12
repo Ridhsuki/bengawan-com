@@ -10,8 +10,7 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/services', [HomeController::class, 'service'])->name('service');
 
 Route::get('/products', [HomeController::class, 'products'])->name('products.index');
-Route::get('/products/{product:slug}', [HomeController::class, 'show'])->name('product.show');
-
+Route::get('/products/{product}', [HomeController::class, 'productDetail'])->name('product.show');
 
 // Diskon
 Route::get('/discount', [HomeController::class, 'discount'])->name('discount');

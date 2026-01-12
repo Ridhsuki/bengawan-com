@@ -54,8 +54,19 @@ class HomeController extends Controller
 
     public function productDetail(Product $product)
     {
-        return view('pages.products.show', compact('product'));
+        $product->load(['category', 'images']);
+
+        $images = collect([$product->image])
+            ->concat($product->images->pluck('image'))
+            ->filter();
+
+        if ($images->isEmpty()) {
+            $images->push(null);
+        }
+
+        return view('pages.products.show', compact('product', 'images'));
     }
+
 
     public function discount()
     {
