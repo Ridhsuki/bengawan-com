@@ -12,18 +12,25 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete()->index();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('image')->nullable();
             $table->text('description')->nullable();
-            $table->decimal('price', 15, 2);
+            $table->decimal('price', 15, 2)->index();
             $table->decimal('discount_price', 15, 2)->nullable();
             $table->integer('stock')->default(0);
             $table->string('link_shopee')->nullable();
             $table->string('link_tokopedia')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(true)->index();
             $table->timestamps();
+
+            $table->index(['is_active', 'category_id']);
+            $table->index(['is_active', 'price']);
+            $table->index(['is_active', 'created_at']);
+            $table->index(['is_active', 'category_id', 'price', 'created_at']);
+
+            $table->fullText(['name', 'description'], 'products_fulltext');
         });
     }
 

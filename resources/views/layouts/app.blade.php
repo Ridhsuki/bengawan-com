@@ -8,30 +8,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @stack('styles')
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        ::selection {
-            background-color: #f3d0f2;
-            color: #333;
-            border-radius: 4px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s ease-in-out;
-        }
-    </style>
 </head>
 
 <body class="bg-white text-gray-800 flex flex-col min-h-screen">

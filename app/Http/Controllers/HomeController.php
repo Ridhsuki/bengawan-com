@@ -45,6 +45,9 @@ class HomeController extends Controller
                         break;
                 }
             })
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
             ->latest()
             ->paginate(12)
             ->withQueryString();
@@ -91,5 +94,38 @@ class HomeController extends Controller
     public function about()
     {
         return view('pages.about');
+    }
+
+    public function searchSuggestions(Request $request)
+    {
+        $query = trim($request->get('q'));
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::active()
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                    ->orWhereFullText(['name', 'description'], $query);
+            })
+            ->select('id', 'name', 'slug', 'image', 'price', 'discount_price')
+            ->limit(5)
+            ->get();
+
+        return response()->json(
+            $products->map(fn($product) => [
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'image' => $product->image
+                    ? asset('storage/' . $product->image)
+                    : asset('assets/img/no-image.webp'),
+                'price' => $product->formatted_price,
+                'discount_price' => $product->has_discount
+                    ? $product->formatted_discount_price
+                    : null,
+                'url' => route('products.show', $product->slug),
+            ])
+        );
     }
 }

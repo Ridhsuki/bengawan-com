@@ -15,3 +15,36 @@ if (mobileMenuBtn && mobileMenu) {
         }
     });
 }
+
+
+function searchComponent() {
+    return {
+        query: '',
+        results: [],
+        show: false,
+        init() {
+            this.$watch('query', value => {
+                if (!value) this.show = false;
+            });
+        },
+        search() {
+            if (this.query.length < 2) {
+                this.results = [];
+                this.show = false;
+                return;
+            }
+
+            fetch(`/search-suggestions?q=${encodeURIComponent(this.query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    this.results = data;
+                    this.show = data.length > 0;
+                });
+        },
+        goToSearch() {
+            if (this.query.trim().length > 0) {
+                window.location.href = `/products?search=${encodeURIComponent(this.query)}`;
+            }
+        }
+    }
+}
