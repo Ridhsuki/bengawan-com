@@ -78,7 +78,7 @@
 
                     <a href="{{ $product->link_tokopedia }}"
                         class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
-                        <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="Tokopedia"
+                        <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="Tokopedia"
                             class="h-12 md:h-16">
                     </a>
                 </div>

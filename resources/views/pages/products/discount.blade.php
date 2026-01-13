@@ -46,7 +46,7 @@
                             </a>
                             <a href="{{ $product->link_tokopedia }}" target="_blank"
                                 class="flex flex-col items-center gap-1 group/icon">
-                                <img src="{{ asset('assets/img/tokopedia-seeklogo 2.png') }}" alt="tokopedia logo"
+                                <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="tokopedia logo"
                                     class="object-contain group-hover/icon:scale-110 transition">
                             </a>
                         </div>
