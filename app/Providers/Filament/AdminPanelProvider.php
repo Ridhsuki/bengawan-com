@@ -49,6 +49,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\ProductCategoriesChart::class,
+                \App\Filament\Widgets\StockStatusChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
