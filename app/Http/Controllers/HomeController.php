@@ -11,7 +11,14 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $products = Product::active()->latest()->take(6)->get();
+        $products = Product::active()
+            ->where(function ($query) {
+                $query->whereNull('discount_price')
+                    ->orWhere('discount_price', 0);
+            })
+            ->latest()
+            ->take(6)
+            ->get();
 
         return view('pages.home', compact('products'));
     }

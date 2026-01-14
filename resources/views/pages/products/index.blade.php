@@ -119,10 +119,25 @@
                                 onerror="this.onerror=null;this.src='{{ asset('assets/img/no-image.webp') }}';this.classList.remove('opacity-0');this.parentElement.classList.remove('skeleton');">
                         </div>
                         <div class="p-4 flex flex-col flex-grow">
-                            <h3 class="font-bold text-lg mb-1 leading-snug">{{ $product->name }}</h3>
-                            <p class="font-bold text-xl mb-4 text-gray-900">{{ $product->formatted_price }}</p>
+                            <h3 class="font-bold text-lg mb-1 leading-snug line-clamp-2">{{ $product->name }}</h3>
+
+                            <div class="mb-6 h-12 flex flex-col justify-center">
+                                @if ($product->has_discount)
+                                    <span class="text-gray-400 text-sm line-through decoration-gray-400">
+                                        {{ $product->formatted_price }}
+                                    </span>
+                                    <span class="font-bold text-lg text-red-600">
+                                        {{ $product->formatted_discount_price }}
+                                    </span>
+                                @else
+                                    <span class="font-bold text-lg text-gray-900">
+                                        {{ $product->formatted_price }}
+                                    </span>
+                                @endif
+                            </div>
+
                             <a href="{{ route('products.show', $product->slug) }}"
-                                class=" text-center mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition shadow-md">
+                                class="text-center mt-auto w-full bg-brand-blue text-white py-2 rounded-lg font-medium hover:bg-blue-800 transition shadow-md">
                                 Cek Produk
                             </a>
                         </div>
