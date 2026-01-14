@@ -29,6 +29,35 @@ class Setting extends Model
         static::saved(function ($setting) {
             Cache::forget('app_settings');
         });
+        static::updating(function ($setting) {
+            if ($setting->isDirty('banners')) {
+                $oldBanners = $setting->getOriginal('banners') ?? [];
+                $newBanners = $setting->banners ?? [];
+
+                $oldImages = collect($oldBanners)->pluck('image')->filter()->all();
+                $newImages = collect($newBanners)->pluck('image')->filter()->all();
+
+                $deletedImages = array_diff($oldImages, $newImages);
+
+                foreach ($deletedImages as $image) {
+                    if (Storage::disk('public')->exists($image)) {
+                        Storage::disk('public')->delete($image);
+                    }
+                }
+            }
+
+            Cache::forget('app_settings');
+        });
+
+        static::deleted(function ($setting) {
+            $banners = $setting->banners ?? [];
+            foreach ($banners as $banner) {
+                if (isset($banner['image']) && Storage::disk('public')->exists($banner['image'])) {
+                    Storage::disk('public')->delete($banner['image']);
+                }
+            }
+            Cache::forget('app_settings');
+        });
     }
 
     public function getWhatsappLinkAttribute(): string

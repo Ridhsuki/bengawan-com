@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Storage;
 
 class Product extends Model
 {
@@ -90,5 +90,26 @@ class Product extends Model
         $message .= "Apakah stoknya masih tersedia?";
 
         return $settings->getWhatsappUrl($message);
+    }
+    protected static function booted(): void
+    {
+        static::updating(function ($product) {
+            if ($product->isDirty('image')) {
+                $oldImage = $product->getOriginal('image');
+
+                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+            }
+        });
+
+        static::deleting(function ($product) {
+            $product->images()->get()->each(function ($galleryItem) {
+                $galleryItem->delete();
+            });
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+        });
     }
 }
