@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->favicon(asset('assets/favicon/favicon.ico'))
             ->profile(isSimple: false)
             ->colors([
                 'primary' => '#172D9D'
