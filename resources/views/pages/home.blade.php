@@ -1,36 +1,69 @@
 <x-app-layout>
     <section class="container mx-auto px-4 py-6">
-        <div class="relative w-full h-64 md:h-[400px] bg-gray-600 rounded-lg overflow-hidden group">
+        <div class="relative w-full h-64 md:h-[400px] bg-gray-200 rounded-lg overflow-hidden group">
 
             <div id="carousel" class="flex transition-transform duration-500 h-full">
-                <div
-                    class="min-w-full h-full bg-gray-600 flex items-center justify-center text-white/20 text-4xl font-bold">
-                    BANNER 1
-                </div>
-                <div
-                    class="min-w-full h-full bg-gray-700 flex items-center justify-center text-white/20 text-4xl font-bold">
-                    BANNER 2
-                </div>
-                <div
-                    class="min-w-full h-full bg-gray-500 flex items-center justify-center text-white/20 text-4xl font-bold">
-                    BANNER 3
-                </div>
-            </div>
 
+                @forelse($settings->banner_list as $index => $banner)
+                    <div class="min-w-full h-full relative">
+                        @if ($banner['url'])
+                            <a href="{{ $banner['url'] }}" target="_blank" class="block w-full h-full">
+                            @else
+                                <div class="block w-full h-full">
+                        @endif
+
+                        <div class="skeleton w-full h-full relative overflow-hidden bg-gray-300 animate-pulse">
+
+                            <img src="{{ $banner['image_url'] }}"
+                                alt="{{ $banner['title'] ?? 'Banner ' . ($index + 1) }}" loading="lazy" decoding="async"
+                                class="w-full h-full object-cover transition-opacity duration-700 opacity-0"
+                                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton', 'animate-pulse');"
+                                onerror="this.onerror=null; this.src='{{ asset('assets/img/no-image.webp') }}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('skeleton', 'animate-pulse');">
+
+                            @if ($banner['title'])
+                                <div
+                                    class="absolute bottom-10 left-4 md:left-10 bg-black/50 text-white px-6 py-3 rounded-lg backdrop-blur-lg z-10 transform transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                                    <h3
+                                        class="text-xl md:text-3xl font-extrabold tracking-wide leading-tight text-shadow-lg">
+                                        {{ $banner['title'] }}
+                                    </h3>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if ($banner['url'])
+                            </a>
+                        @else
+                    </div>
+                @endif
+            </div>
+        @empty
+            <div
+                class="min-w-full h-full bg-gray-600 flex items-center justify-center text-white/20 text-4xl font-bold">
+                NO BANNER
+            </div>
+            @endforelse
+        </div>
+
+        @if (count($settings->banner_list) > 1)
             <button id="prevBtn"
-                class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-3xl focus:outline-none">
+                class="cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-3xl focus:outline-none z-20 bg-black/20 hover:bg-black/40 rounded-full p-2 transition">
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
             <button id="nextBtn"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-3xl focus:outline-none">
+                class="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-3xl focus:outline-none z-20 bg-black/20 hover:bg-black/40 rounded-full p-2 transition">
                 <i class="fa-solid fa-chevron-right"></i>
             </button>
 
-            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                <button class="w-2 h-2 rounded-full bg-white opacity-100 dot-indicator" data-index="0"></button>
-                <button class="w-2 h-2 rounded-full bg-white opacity-50 dot-indicator" data-index="1"></button>
-                <button class="w-2 h-2 rounded-full bg-white opacity-50 dot-indicator" data-index="2"></button>
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                @foreach ($settings->banner_list as $index => $banner)
+                    <button
+                        class="w-2 h-2 rounded-full bg-white transition-opacity duration-300 dot-indicator {{ $index === 0 ? 'opacity-100' : 'opacity-50' }}"
+                        data-index="{{ $index }}">
+                    </button>
+                @endforeach
             </div>
+        @endif
         </div>
     </section>
 

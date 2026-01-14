@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="flex gap-8 items-center">
-                    <a href="https://wa.me/<?= $product->whatsapp_link ?>"
+                    <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank"
                         class="transform hover:scale-110 transition duration-300">
                         <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="WhatsApp" class="h-12 md:h-16">
                     </a>

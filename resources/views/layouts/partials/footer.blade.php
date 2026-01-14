@@ -4,16 +4,32 @@
 
             <div>
                 <div class="flex items-center md:text-2xl mb-4">
-                    <img src="{{ asset('assets/img/logo2.png') }}" alt="Bengawan Komputer Solo" loading="lazy">
+                    <img src="{{ asset('assets/img/logo2.png') }}"
+                        alt="{{ $settings->company_name ?? 'Bengawan Computer' }}" loading="lazy">
                 </div>
-                <p class="text-sm text-gray-700 leading-relaxed mb-4">
-                    Jl. Al Ikhlas, Mendungan, Pabelan,<br>
-                    Kec. Kartasura, Kab. Sukoharjo<br>
-                    Telp(WA) : 085799599723<br>
-                    Instagram : @laptopsecondsolo<br>
-                    Facebook : @BENGAWANKOMPUTER<br>
-                    Tiktok : @laptopsecondsoloraya
-                </p>
+
+                <div class="text-sm text-gray-700 leading-relaxed mb-4 space-y-1">
+                    <div class="mb-2">
+                        {!! nl2br(e($settings->address ?? '-')) !!}
+                    </div>
+
+                    <div>
+                        Telp(WA) :
+                        <a href="{{ $settings->getWhatsappUrl('Halo Bengawan Computer.') }}" target="_blank"
+                            class="hover:text-blue-600 hover:underline">
+                            {{ $settings->phone ?? '-' }}
+                        </a>
+                    </div>
+
+                    @foreach ($settings->social_media_list as $social)
+                        <div>
+                            {{ $social['platform'] }} :
+                            <a href="{{ $social['url'] }}" target="_blank" class="hover:text-blue-600 hover:underline">
+                                {{ $social['username'] }}
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
             <div>
@@ -52,7 +68,7 @@
         </div>
 
         <div class="border-t border-gray-300 pt-6 text-center text-xs text-gray-600">
-            &copy; {{ date('Y') }} Bengawan Komputer
+            &copy; {{ date('Y') }} {{ $settings->company_name ?? 'Bengawan Komputer' }}
         </div>
     </div>
 </footer>

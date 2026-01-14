@@ -73,4 +73,22 @@ class Product extends Model
     {
         return 'Rp' . number_format((float) $this->discount_price, 0, ',', '.');
     }
+
+    public function getWhatsappInquiryLinkAttribute(): string
+    {
+        $settings = Setting::getData();
+        $priceDisplay = $this->has_discount
+            ? $this->formatted_discount_price
+            : $this->formatted_price;
+
+        $productUrl = route('products.show', $this->slug);
+
+        $message = "Halo Bengawan Computer, saya tertarik dengan produk ini:\n\n";
+        $message .= "*{$this->name}*\n";
+        $message .= "Harga: {$priceDisplay}\n";
+        $message .= "Link: {$productUrl}\n\n";
+        $message .= "Apakah stoknya masih tersedia?";
+
+        return $settings->getWhatsappUrl($message);
+    }
 }

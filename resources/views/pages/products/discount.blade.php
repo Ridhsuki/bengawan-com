@@ -35,7 +35,8 @@
                         </div>
 
                         <div class="mt-auto flex items-end justify-center gap-6 px-2">
-                            <a href="#" class="flex flex-col items-center gap-1 group/icon">
+                            <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank"
+                                class="flex flex-col items-center gap-1 group/icon">
                                 <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
                                     class="object-contain group-hover/icon:scale-110 transition">
                             </a>

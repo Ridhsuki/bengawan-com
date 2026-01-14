@@ -40,12 +40,11 @@
 
 
             <div class="flex items-center gap-2">
-                <a href="https://share.google/vRAtM3CpKhJ3095Zj" target="_blank"
+                <a href="{{ $settings->google_maps_link ?? '#' }}" target="_blank"
                     class="bg-brand-blue text-white px-4 md:px-6 py-2 rounded-2xl font-medium flex items-center gap-2 hover:bg-blue-800 transition shadow-sm text-sm md:text-base">
                     <i class="fa-solid fa-location-dot"></i>
                     <span class="hidden sm:inline">Lokasi Toko</span>
                 </a>
-
                 <button id="mobileMenuBtn" class="md:hidden text-gray-700 text-2xl px-2 focus:outline-none">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
@@ -70,7 +69,7 @@
                     <li>
                         <a href="{{ route('filament.admin.pages.dashboard') }}"
                             class="block py-2 hover:text-brand-blue hover:bg-gray-50 rounded transition">
-                            <i class="fa-solid fa-user text-sm transition group-hover:text-yellow-300"></i>  Dashboard</a>
+                            <i class="fa-solid fa-user text-sm transition group-hover:text-yellow-300"></i> Dashboard</a>
                     </li>
                 @endauth
             </ul>

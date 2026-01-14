@@ -3,7 +3,8 @@
 
         <div class="flex flex-col md:flex-row gap-6 mb-8">
 
-            <a href="#"
+            <a href="{{ $settings->getWhatsappUrl('Halo Bengawan Computer, saya ingin mengecek status service perangkat saya. Mohon informasinya.') }}"
+                target="_blank"
                 class="flex-1 bg-brand-dark text-white rounded-xl py-4 px-6 flex items-center justify-center gap-4 shadow-lg hover:bg-blue-900 transition group">
                 <div
                     class="border-2 border-white/30 rounded-full p-2 w-12 h-12 flex items-center justify-center group-hover:bg-white/10 transition">
@@ -12,7 +13,8 @@
                 <span class="font-bold text-lg">Check Status Service Anda</span>
             </a>
 
-            <a href="#"
+            <a href="{{ $settings->getWhatsappUrl('Halo Bengawan Computer, saya mengalami kendala pada laptop saya dan ingin berkonsultasi mengenai perbaikannya. Terima kasih.') }}"
+                target="_blank"
                 class="flex-1 bg-brand-dark text-white rounded-xl py-4 px-6 flex items-center justify-center gap-4 shadow-lg hover:bg-blue-900 transition group">
                 <div
                     class="border-2 border-white/30 rounded-full p-2 w-12 h-12 flex items-center justify-center group-hover:bg-white/10 transition">

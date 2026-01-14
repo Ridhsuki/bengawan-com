@@ -220,7 +220,9 @@ class DatabaseSeeder extends Seeder
                 'is_active' => $product['is_active'],
             ]);
         }
-
+        $this->call([
+            SettingSeeder::class,
+        ]);
         $this->command->info('Dummy data Categories dan Products berhasil dibuat (Total: ' . count($products) . ' produk).');
     }
 }

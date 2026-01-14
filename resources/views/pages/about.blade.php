@@ -12,11 +12,10 @@
 
                 <div class="w-full md:w-1/2 max-w-lg">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 uppercase mb-4 leading-tight">
-                        SOLUSI TEKNOLOGI TANPA BATAS
+                        {{ $settings->about_title ?? 'Tentang Bengawan Komputer' }}
                     </h1>
                     <p class="text-gray-700 text-base leading-relaxed mb-8">
-                        Bengawan Komputer adalah perusahaan IT yang memberikan solusi untuk pengadaan barang dan jasa.
-                        Kami melayani kebutuhan perusahaan, pengadaan institusi pemerintahan dan pembelian pribadi.
+                        {!! nl2br(e($settings->about_desc ?? '-')) !!}
                     </p>
 
                     <a href="#"

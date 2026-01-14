@@ -67,10 +67,11 @@
                     <a href="{{ route('filament.admin.auth.login') }}" class="flex items-center gap-2 group">
                         <i class="fa-regular fa-user text-2xl transition group-hover:text-yellow-300"></i>
                     </a>
-                    <div class="text-xs text-right leading-tight">
+                    <a href="{{ $settings->getWhatsappUrl('Halo Bengawan Computer.') }}" target="_blank"
+                        class="text-xs text-right leading-tight">
                         <div class="font-bold">WhatsApp</div>
-                        <div>085799599723</div>
-                    </div>
+                        <div class="whitespace-nowrap">{{ $settings->phone ?? '-' }}</div>
+                    </a>
                 @endauth
 
             </div>
