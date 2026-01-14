@@ -6,11 +6,26 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
+    private function setSeo($title = null, $description = null, $image = null, $type = 'website')
+    {
+        view()->share([
+            'title' => $title,
+            'description' => $description,
+            'image' => $image,
+            'type' => $type,
+        ]);
+    }
+
     public function index()
     {
+        $this->setSeo(
+            title: 'Home | Bengawan Computer',
+            description: 'Pusat Laptop Murah & Service Terpercaya di Solo Raya. Menyediakan laptop baru, bekas, dan sparepart berkualitas.'
+        );
         $products = Product::active()
             ->where(function ($query) {
                 $query->whereNull('discount_price')
@@ -25,8 +40,16 @@ class HomeController extends Controller
 
     public function products(Request $request)
     {
-        $categories = Category::withCount('products')->get();
+        $pageTitle = 'Katalog Produk';
+        if ($request->category) {
+            $pageTitle = 'Jual Laptop ' . Str::headline($request->category);
+        } elseif ($request->search) {
+            $pageTitle = 'Hasil Pencarian: ' . $request->search;
+        }
 
+        $this->setSeo($pageTitle . ' | Bengawan Computer');
+
+        $categories = Category::withCount('products')->get();
         $products = Product::active()
             ->when($request->category, function (Builder $query, $slug) {
                 $query->whereHas('category', function (Builder $q) use ($slug) {
@@ -62,7 +85,7 @@ class HomeController extends Controller
         return view('pages.products.index', compact('products', 'categories'));
     }
 
-    public function productDetail(Product $product)
+    public function show(Product $product)
     {
         $product->load(['category', 'images']);
 
@@ -74,12 +97,23 @@ class HomeController extends Controller
             $images->push(null);
         }
 
+        $this->setSeo(
+            title: $product->name . ' | Spesifikasi & Harga Murah',
+            description: Str::limit(strip_tags($product->description), 160),
+            image: $product->image ? asset('storage/' . $product->image) : null,
+            type: 'product'
+        );
+
         return view('pages.products.show', compact('product', 'images'));
     }
 
-
     public function discount()
     {
+        $this->setSeo(
+            title: 'Promo & Diskon Laptop Murah Solo',
+            description: 'Dapatkan penawaran harga terbaik untuk laptop dan aksesoris komputer di Bengawan Computer.'
+        );
+
         $products = Product::where('is_active', true)
             ->whereNotNull('discount_price')
             ->where('discount_price', '>', 0)
@@ -89,17 +123,23 @@ class HomeController extends Controller
         return view('pages.products.discount', compact('products'));
     }
 
-    public function show(Product $product)
-    {
-        return view('pages.products.show', compact('product'));
-    }
-
     public function service()
     {
+        $this->setSeo(
+            title: 'Service Center Laptop Terpercaya Solo Raya',
+            description: 'Layanan perbaikan laptop segala merk, ganti LCD, Keyboard, Baterai, Install Ulang, dll.'
+        );
+
         return view('pages.services');
     }
+
     public function about()
     {
+        $this->setSeo(
+            title: 'Tentang Kami - Bengawan Computer',
+            description: 'Profil perusahaan Bengawan Computer, visi misi, dan lokasi toko kami.'
+        );
+
         return view('pages.about');
     }
 
