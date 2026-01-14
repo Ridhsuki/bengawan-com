@@ -18,7 +18,8 @@
                         {!! nl2br(e($settings->about_desc ?? '-')) !!}
                     </p>
 
-                    <a href="#"
+                    <a href="{{ $settings->getWhatsappUrl('Halo Bengawan Computer, saya melihat penawaran *Diskon Spesial* di website. Boleh diinfokan promo atau potongan harga yang sedang berlaku saat ini? Terima kasih.') }}"
+                        target="_blank"
                         class="inline-flex items-center gap-3 bg-brand-dark text-white font-medium px-8 py-3 rounded-full hover:bg-blue-900 transition shadow-lg">
                         <i class="fa-solid fa-phone-volume"></i>
                         Hubungi Kami dan Dapatkan Diskon !
