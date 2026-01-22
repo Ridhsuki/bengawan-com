@@ -43,7 +43,6 @@ class FeedbackInfolist
                             ->columns(1)
                             ->schema([
                                 TextEntry::make('message')
-                                    ->label('Isi Masukan')
                                     ->columnSpanFull()
                                     ->prose()
                                     ->placeholder('N/A'),
@@ -75,7 +74,7 @@ class FeedbackInfolist
                             ->icon('heroicon-o-clock')
                             ->schema([
                                 TextEntry::make('created_at')
-                                    ->label('Diterima Pada')
+                                    ->label('Submitted At')
                                     ->dateTime('d M Y, H:i:s')
                                     ->icon('heroicon-o-calendar-days'),
                             ])->grow(false),
