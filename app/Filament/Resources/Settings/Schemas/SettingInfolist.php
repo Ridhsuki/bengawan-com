@@ -29,7 +29,17 @@ class SettingInfolist
                             ->extraImgAttributes([
                                 'title' => 'Company Logo',
                                 'loading' => 'lazy',
-                                'style' => 'border-radius: 0.375rem; object-fit: cover;'
+                                'style' => '
+                                            max-width: 100%;
+                                            width: auto;
+                                            height: auto;
+                                            max-height: 180px;
+                                            border-radius: 0.375rem;
+                                            object-fit: contain;
+                                            display: block;
+                                            margin-left: auto;
+                                            margin-right: auto;
+                                        ',
                             ])
                             ->hint('This logo is predefined and cannot be altered through the UI. To change it, please update the logo file in the source code.')
                         ,
