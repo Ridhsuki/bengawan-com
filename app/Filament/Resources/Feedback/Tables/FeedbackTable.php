@@ -49,7 +49,6 @@ class FeedbackTable
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->label('Diterima')
                     ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -78,6 +77,7 @@ class FeedbackTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }
