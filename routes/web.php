@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeedbackController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
@@ -16,3 +17,6 @@ Route::get('/products/{product}', [HomeController::class, 'show'])->name('produc
 
 // Diskon
 Route::get('/discount', [HomeController::class, 'discount'])->name('discount');
+
+Route::post('/feedback', [FeedbackController::class, 'store'])
+    ->name('feedback.store');

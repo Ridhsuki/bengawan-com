@@ -50,16 +50,58 @@
                 </ul>
             </div>
 
-            <div>
+            <div id="feedback-form">
                 <h4 class="font-bold text-gray-800 mb-2">Beri Masukan</h4>
                 <p class="text-xs text-gray-600 mb-3">Bantu kami jadi lebih baik! Sampaikan kritik dan saran Anda di
                     sini</p>
 
-                <form class="flex items-center border border-gray-400 rounded-full bg-transparent p-1">
-                    <input type="text" placeholder="Tulis masukan kalian disini"
-                        class="bg-transparent flex-grow px-4 py-1 text-sm outline-none text-gray-700 placeholder-gray-400">
-                    <button type="button"
-                        class="bg-white text-brand-blue text-sm font-bold px-6 py-1.5 rounded-full shadow hover:bg-gray-50 transition">
+                @if (session('success'))
+                    <div
+                        class="mb-3 p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-lg shadow-sm flex items-start animate-fade-in-up">
+                        <svg class="w-4 h-4 mr-1.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                @endif
+
+                @if ($errors->has('limit'))
+                    <div class="mb-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg shadow-sm flex items-start animate-pulse"
+                        role="alert">
+                        <svg class="w-4 h-4 mr-1.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <span class="font-bold">Limit Reached!</span>
+                            To prevent duplicate submissions, please try again in
+                            <span id="retry-countdown" class="font-bold font-mono text-red-800 text-sm">
+                                {{ session('retry_seconds', 60) }}
+                            </span>
+                            seconds.
+                        </div>
+                    </div>
+                @endif
+
+                @if ($errors->has('message'))
+                    <div class="mb-3 p-2 text-red-600 text-xs">
+                        {{ $errors->first('message') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('feedback.store') }}" method="POST"
+                    class="flex items-center border border-gray-400 rounded-full bg-transparent p-1 focus-within:ring-2 focus-within:ring-brand-blue focus-within:border-transparent transition relative">
+                    @csrf
+
+                    <input type="text" name="message" value="{{ old('message') }}"
+                        placeholder="Tulis masukan kalian disini" required autocomplete="off"
+                        class="bg-transparent flex-grow px-4 py-1 text-sm outline-none text-gray-700 placeholder-gray-400 w-full">
+
+                    <button type="submit"
+                        class="bg-white text-brand-blue text-sm font-bold px-6 py-1.5 rounded-full shadow hover:bg-gray-50 transition active:scale-95 whitespace-nowrap cursor-pointer">
                         Kirim
                     </button>
                 </form>
