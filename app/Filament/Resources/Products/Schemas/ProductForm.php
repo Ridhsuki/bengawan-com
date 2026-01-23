@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -106,10 +105,12 @@ class ProductForm
                     TextInput::make('link_shopee')
                         ->url()
                         ->label('Link Shopee')
+                        ->maxLength(2001)
                         ->prefixIcon('heroicon-o-shopping-bag'),
                     TextInput::make('link_tokopedia')
                         ->url()
                         ->label('Link Tokopedia')
+                        ->maxLength(2001)
                         ->prefixIcon('heroicon-o-shopping-cart')
                 ])->columnSpanFull(),
             ]);
