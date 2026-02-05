@@ -135,6 +135,57 @@ class ProductsTable
                     ->placeholder('Select Category')
             ])
             ->recordActions([
+                \Filament\Actions\Action::make('record_sale')
+                    ->label('Catat Terjual')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->color('success')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('quantity')
+                            ->label('Jumlah Terjual')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(1)
+                            ->required(),
+
+                        \Filament\Forms\Components\DatePicker::make('transaction_date')
+                            ->label('Tanggal Transaksi')
+                            ->native(false)
+                            ->default(now())
+                            ->required(),
+                    ])
+                    ->action(function (\App\Models\Product $record, array $data) {
+                        // 1. Cek stok
+                        if ($record->stock < $data['quantity']) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Stok tidak cukup!')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        // 2. Hitung profit
+                        $cost = $record->cost_price;
+                        $price = $record->price;
+                        $profit = ($price - $cost) * $data['quantity'];
+
+                        // 3. Simpan penjualan
+                        \App\Models\Sale::create([
+                            'product_id' => $record->id,
+                            'quantity' => $data['quantity'],
+                            'cost_price' => $cost,
+                            'selling_price' => $price,
+                            'total_profit' => $profit,
+                            'transaction_date' => $data['transaction_date'],
+                        ]);
+
+                        // 4. Kurangi stok
+                        $record->decrement('stock', $data['quantity']);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Penjualan berhasil dicatat')
+                            ->success()
+                            ->send();
+                    }),
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),

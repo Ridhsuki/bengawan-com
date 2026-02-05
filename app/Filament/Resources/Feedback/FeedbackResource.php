@@ -20,7 +20,7 @@ class FeedbackResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Inquiries';
     public static function getNavigationSort(): ?int
     {
-        return 1;
+        return 2;
     }
 
     public static function getNavigationBadge(): ?string
