@@ -224,6 +224,7 @@ class DatabaseSeeder extends Seeder
         }
         $this->call([
             SettingSeeder::class,
+            // SaleSeeder::class
         ]);
         $this->command->info('Dummy data Categories dan Products berhasil dibuat (Total: ' . count($products) . ' produk).');
     }
