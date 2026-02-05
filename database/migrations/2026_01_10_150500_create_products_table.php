@@ -15,8 +15,10 @@ return new class extends Migration {
             $table->foreignId('category_id')->constrained()->cascadeOnDelete()->index();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('serial_number')->nullable();
             $table->string('image')->nullable();
             $table->text('description')->nullable();
+            $table->decimal('cost_price', 15, 2)->default(0);
             $table->decimal('price', 15, 2)->index();
             $table->decimal('discount_price', 15, 2)->nullable();
             $table->integer('stock')->default(0);

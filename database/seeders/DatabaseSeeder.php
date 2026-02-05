@@ -209,9 +209,11 @@ class DatabaseSeeder extends Seeder
             Product::create([
                 'category_id' => $product['category_id'],
                 'name' => $product['name'],
-                'slug' => Str::slug($product['name']), // Otomatis buat slug dari nama
+                'slug' => Str::slug($product['name']),
+                'serial_number' => 'SN-' . strtoupper(Str::random(8)),
                 'image' => null,
                 'description' => $product['description'],
+                'cost_price' => $product['price'] * 0.8,
                 'price' => $product['price'],
                 'discount_price' => $product['discount_price'],
                 'stock' => $product['stock'],

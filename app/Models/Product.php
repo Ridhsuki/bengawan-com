@@ -24,6 +24,8 @@ class Product extends Model
         'link_shopee',
         'link_tokopedia',
         'is_active',
+        'serial_number',
+        'cost_price',
     ];
 
     protected $casts = [

@@ -50,11 +50,18 @@ class ProductInfolist
                     ->icon('heroicon-o-currency-dollar')
                     ->columns(2)
                     ->schema([
+                        TextEntry::make('serial_number')
+                            ->label('Serial Number')
+                            ->badge()->color('gray'),
+                        TextEntry::make('cost_price')
+                            ->label('Harga Modal')
+                            ->money('IDR')
+                            ->placeholder('-'),
                         TextEntry::make('price')
-                            ->label('Price')
+                            ->label('Harga Jual')
                             ->money('IDR'),
                         TextEntry::make('discount_price')
-                            ->label('Discount Price')
+                            ->label('Harga Diskon')
                             ->money('IDR')
                             ->placeholder('-'),
                         TextEntry::make('discount_percentage')
@@ -63,7 +70,7 @@ class ProductInfolist
                             ->color('success')
                             ->formatStateUsing(fn($state) => $state ? $state . '%' : '-'),
                         TextEntry::make('stock')
-                            ->label('Stock')
+                            ->label('Stok')
                             ->badge()
                             ->color(fn($state) => match (true) {
                                 $state <= 5 => 'danger',

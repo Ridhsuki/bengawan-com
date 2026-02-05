@@ -78,11 +78,19 @@ class ProductForm
                         ->addActionLabel('Tambah Foto Galeri')->columnSpanFull(),
                 ])->columnSpanFull(),
                 Section::make('Harga & Stok')->schema([
+                    TextInput::make('serial_number')
+                        ->label('Serial Number')
+                        ->nullable(),
+                    TextInput::make('cost_price')
+                        ->label('Harga Modal')
+                        ->prefix('Rp')
+                        ->numeric()
+                        ->required(),
                     TextInput::make('price')
                         ->numeric()
                         ->prefix('Rp')
                         ->required()
-                        ->label('Harga Produk')
+                        ->label('Harga Jual')
                         ->columnSpan(1),
                     TextInput::make('discount_price')
                         ->numeric()

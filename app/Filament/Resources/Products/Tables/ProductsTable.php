@@ -22,10 +22,14 @@ class ProductsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nama Produk')
                     ->searchable()
                     ->sortable()->limit(40)
-                    ->extraAttributes(['class' => 'font-semibold']),
-
+                    ->extraAttributes(['class' => 'font-semibold'])
+                    ->description(
+                        fn($record) =>
+                        $record->serial_number ?: '-'
+                    ),
                 TextColumn::make('slug')
                     ->searchable()
                     ->badge()
@@ -52,7 +56,14 @@ class ProductsTable
                     })
                     ->extraImgAttributes(['title' => 'Articles Image', 'loading' => 'lazy', 'style' => 'border-radius: 0.375rem; object-fit: cover;']),
 
+                TextColumn::make('cost_price')
+                    ->label('Harga Modal')
+                    ->money('idr', true)
+                    ->sortable()
+                    ->extraAttributes(['class' => 'font-bold text-gray-900']),
+
                 TextColumn::make('price')
+                    ->label('Harga Jual')
                     ->money('idr', true)
                     ->sortable()
                     ->extraAttributes(['class' => 'font-bold text-gray-900']),
@@ -79,7 +90,8 @@ class ProductsTable
                     ->formatStateUsing(fn($state) => $state ? 'Link' : null)
                     ->url(fn($state) => $state)
                     ->openUrlInNewTab()
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('link_tokopedia')
                     ->label('Tokopedia')
@@ -87,7 +99,8 @@ class ProductsTable
                     ->formatStateUsing(fn($state) => $state ? 'Link' : null)
                     ->url(fn($state) => $state)
                     ->openUrlInNewTab()
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('is_active')
                     ->label('Active')
