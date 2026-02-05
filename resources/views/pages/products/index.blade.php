@@ -108,7 +108,7 @@
         <main class="w-full lg:w-3/4">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                @foreach ($products as $product)
+                @forelse ($products as $product)
                     <div
                         class="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition flex flex-col group">
                         <div class="h-48 skeleton w-full relative overflow-hidden bg-gray-200">
@@ -142,8 +142,32 @@
                             </a>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
+                        <img loading="lazy" src="{{ asset('assets/img/no-results.png') }}" alt="Produk tidak ditemukan"
+                            class="mb-6 h-48 w-auto object-contain opacity-80">
 
+                        <h3 class="mb-2 text-xl font-bold text-gray-900">
+                            Oops, Produk Tidak Ditemukan!
+                        </h3>
+
+                        <p class="mb-8 max-w-md text-gray-500">
+                            Kami tidak dapat menemukan produk yang sesuai dengan filter pencarian Anda. Coba kurangi
+                            filter atau cari kata kunci lain.
+                        </p>
+
+                        <a href="{{ route('products.index') }}"
+                            class="inline-flex items-center rounded-lg bg-brand-blue px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors">
+                            <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                            Reset Semua Filter
+                        </a>
+                    </div>
+                @endforelse
             </div>
             <div class="mt-8">
                 {{ $products->links() }}
