@@ -21,7 +21,8 @@ class ProductResource extends Resource
     protected static ?string $model = Product::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedComputerDesktop;
-    protected static string|\UnitEnum|null $navigationGroup = 'Products Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Produk';
+    protected static ?string $pluralLabel = 'Produk';
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema

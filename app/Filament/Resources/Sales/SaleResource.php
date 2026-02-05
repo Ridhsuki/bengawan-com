@@ -28,7 +28,9 @@ class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales Report';
+    protected static ?string $pluralLabel = 'Laporan Penjualan';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
     public static function getNavigationSort(): ?int
     {
         return 1;

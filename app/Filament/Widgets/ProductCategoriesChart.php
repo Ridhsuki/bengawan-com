@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class ProductCategoriesChart extends ChartWidget
 {
-    protected ?string $heading = 'Product Distribution by Category';
+    protected ?string $heading = 'Produk per Kategori';
 
     protected static ?int $sort = 2;
 

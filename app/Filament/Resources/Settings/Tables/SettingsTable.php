@@ -16,7 +16,7 @@ class SettingsTable
         return $table
             ->columns([
                 ImageColumn::make('logo')
-                    ->label('Company Logo')->tooltip('This logo is predefined and cannot be altered through the UI. To change it, please update the logo file in the source code.')
+                    ->tooltip('This logo is predefined and cannot be altered through the UI. To change it, please update the logo file in the source code.')
                     ->alignCenter()
                     ->getStateUsing(function ($record) {
                         return asset('assets/img/about-logo.png');
@@ -25,11 +25,12 @@ class SettingsTable
                             'loading' => 'lazy',
                         ]),
                 TextColumn::make('company_name')
-                    ->label('Company Name')
+                    ->label('Nama Toko')
                     ->icon('heroicon-o-building-office'),
-                TextColumn::make('about_desc')->label('About')
+                TextColumn::make('about_desc')->label('Tentang')
                     ->limit(23)->icon('heroicon-o-document-text'),
                 TextColumn::make('phone')
+                    ->label('No Telepon')
                     ->icon('heroicon-o-phone'),
             ])
             ->recordActions([

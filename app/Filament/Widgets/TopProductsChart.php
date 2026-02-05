@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class TopProductsChart extends ChartWidget
 {
-    protected ?string $heading = 'Top 5 Produk Paling Menguntungkan';
+    protected ?string $heading = 'Top 5 Produk Terlaris';
 
     protected static ?int $sort = 4;
 

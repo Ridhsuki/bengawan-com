@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class StockStatusChart extends ChartWidget
 {
-    protected ?string $heading = 'Inventory Health / Status Stok';
+    protected ?string $heading = 'Kondisi Stok Produk';
 
     protected static ?int $sort = 3;
 

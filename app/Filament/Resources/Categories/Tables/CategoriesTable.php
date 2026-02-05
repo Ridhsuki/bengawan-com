@@ -18,7 +18,7 @@ class CategoriesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Category Name')
+                    ->label('Kategori')
                     ->searchable()
                     ->sortable()
                     ->toggleable()

@@ -8,8 +8,7 @@ use Illuminate\Support\Carbon;
 
 class SalesProfitChart extends ChartWidget
 {
-    // protected ?string $maxHeight = '300px';
-    protected ?string $heading = 'Tren Omset & Keuntungan (30 Hari)';
+    protected ?string $heading = 'Omset & Keuntungan (30 Hari)';
 
     protected static ?int $sort = 9;
 

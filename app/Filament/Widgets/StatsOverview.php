@@ -14,26 +14,26 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Products', Product::count())
-                ->description('All products in database')
+            Stat::make('Total Produk', Product::count())
+                ->description('Semua produk terdaftar')
                 ->descriptionIcon('heroicon-m-cube')
                 ->color('primary')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
 
-            Stat::make('Active Products', Product::where('is_active', true)->count())
-                ->description('Products visible to customers')
+            Stat::make('Produk Aktif', Product::where('is_active', true)->count())
+                ->description('Tersedia di katalog/toko')
                 ->descriptionIcon('heroicon-m-eye')
                 ->color('success')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
 
-            Stat::make('Discounted Items', Product::where('discount_price', '>', 0)->count())
-                ->description('Products currently on sale')
+            Stat::make('Produk promo', Product::where('discount_price', '>', 0)->count())
+                ->description('Sedang dalam masa diskon')
                 ->descriptionIcon('heroicon-m-tag')
                 ->color('warning')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),
 
-            Stat::make('Total Categories', Category::count())
-                ->description('Product classifications')
+            Stat::make('Total Kategori', Category::count())
+                ->description('Pengelompokan produk')
                 ->descriptionIcon('heroicon-m-rectangle-stack')
                 ->color('info')
                 ->chart([7, 2, 10, 3, 15, 4, 17]),

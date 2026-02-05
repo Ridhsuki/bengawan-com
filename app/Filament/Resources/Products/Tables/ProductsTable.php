@@ -38,6 +38,7 @@ class ProductsTable
                     ->tooltip(fn($record) => $record->slug)
                     ->extraAttributes(['class' => 'text-gray-500 text-sm']),
                 TextColumn::make('category.name')
+                    ->label('Kategori')
                     ->badge()
                     ->searchable()
                     ->sortable()
@@ -45,6 +46,7 @@ class ProductsTable
                     ->extraAttributes(['class' => 'font-semibold text-gray-800']),
 
                 ImageColumn::make('image')
+                    ->label('Gambar')
                     ->square()
                     ->imageWidth(90)
                     ->imageHeight(45)
@@ -69,6 +71,7 @@ class ProductsTable
                     ->extraAttributes(['class' => 'font-bold text-gray-900']),
 
                 TextColumn::make('discount_price')
+                    ->label('Harga Promo')
                     ->placeholder('no discount price')
                     ->money('idr', true)
                     ->sortable()
@@ -76,6 +79,7 @@ class ProductsTable
                     ->toggleable(),
 
                 BadgeColumn::make('stock')
+                    ->label('stok')
                     ->colors([
                         'danger' => fn($state) => $state <= 5,
                         'warning' => fn($state) => $state > 5 && $state <= 20,
