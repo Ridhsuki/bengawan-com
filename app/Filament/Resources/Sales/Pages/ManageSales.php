@@ -70,7 +70,7 @@ class ManageSales extends ManageRecords
                         'sales' => $sales,
                         'totalOmset' => $totalOmset,
                         'totalProfit' => $totalProfit,
-                        'dateRange' => 'Periode: ' . $dateRangeText,
+                        'dateRange' => $dateRangeText,
                         'setting' => $setting,
                     ])->setPaper('a4', 'portrait')->setOption('isPhpEnabled', true);
 
