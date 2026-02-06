@@ -6,12 +6,7 @@ use App\Filament\Resources\Sales\Pages\ManageSales;
 use App\Models\Sale;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Group;
-use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
@@ -19,10 +14,10 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\FiltersLayout;
+use Illuminate\Support\Facades\DB;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 
 class SaleResource extends Resource
 {
@@ -63,25 +58,49 @@ class SaleResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
                             );
                     })
-            ], layout: FiltersLayout::Modal)
+            ])
             ->columns([
                 TextColumn::make('transaction_date')
                     ->label('Tanggal')
                     ->date('d M Y')
                     ->sortable(),
+                TextColumn::make('customer_info')
+                    ->label('Customer')
+                    ->limit(15)
+                    ->searchable()
+                    ->icon('heroicon-m-user'),
                 TextColumn::make('product.name')
                     ->label('Produk')
-                    ->searchable(),
+                    ->searchable()
+                    ->limit(20),
                 TextColumn::make('quantity')
-                    ->label('Qty')
+                    ->label('Qty')->badge()
                     ->summarize(Sum::make()->label('Total Unit')),
-                TextColumn::make('selling_price')
-                    ->label('Harga Jual')
-                    ->money('IDR'),
                 TextColumn::make('cost_price')
                     ->label('Modal')
+                    ->money('IDR'),
+                TextColumn::make('selling_price')
+                    ->label('Harga Awal')
+                    ->money('IDR'),
+                TextColumn::make('negotiated_price')
+                    ->label('Harga/Unit')
                     ->money('IDR')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('total_omset')
+                    ->label('Total Omset')
+                    ->state(function (Sale $record) {
+                        return $record->negotiated_price * $record->quantity;
+                    })
+                    ->money('IDR')
+                    ->weight('bold')
+                    ->color('primary')
+                    ->summarize(
+                        Summarizer::make()
+                            ->label('Total Pendapatan')
+                            ->using(fn($query) => $query->sum(DB::raw('negotiated_price * quantity')))
+                            ->money('IDR')
+                    ),
                 TextColumn::make('total_profit')
                     ->label('Keuntungan')
                     ->money('IDR')

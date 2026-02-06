@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->integer('quantity');
             $table->decimal('cost_price', 15, 2);
             $table->decimal('selling_price', 15, 2);
+            $table->decimal('negotiated_price', 15, 2)->nullable();
             $table->decimal('total_profit', 15, 2);
+            $table->string('customer_info')->nullable();
             $table->date('transaction_date');
             $table->timestamps();
         });

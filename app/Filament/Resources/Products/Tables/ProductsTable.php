@@ -150,7 +150,19 @@ class ProductsTable
                             ->minValue(1)
                             ->default(1)
                             ->required(),
-
+                        \Filament\Forms\Components\TextInput::make('negotiated_price')
+                            ->label('Harga Terjual (Nego)')
+                            ->helperText('Harga kesepakatan dengan customer. Default adalah harga produk.')
+                            ->default(fn($record) => $record->price)
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->required(),
+                        \Filament\Forms\Components\TextInput::make('customer_info')
+                            ->label('Info Customer')
+                            ->placeholder('Nama Customer / No. WA')
+                            ->helperText('Masukkan Nama atau Nomor Telepon customer.')
+                            ->default('Umum')
+                            ->required(),
                         \Filament\Forms\Components\DatePicker::make('transaction_date')
                             ->label('Tanggal Transaksi')
                             ->native(false)
@@ -168,18 +180,20 @@ class ProductsTable
                             return;
                         }
 
-                        // 2. Hitung profit
                         $cost = $record->cost_price;
-                        $price = $record->price;
-                        $profit = ($price - $cost) * $data['quantity'];
+                        $sellingPrice = $record->price;
+                        $negotiatedPrice = $data['negotiated_price'];
 
-                        // 3. Simpan penjualan
+                        $profit = ($negotiatedPrice - $cost) * $data['quantity'];
+
                         \App\Models\Sale::create([
                             'product_id' => $record->id,
                             'quantity' => $data['quantity'],
                             'cost_price' => $cost,
-                            'selling_price' => $price,
+                            'selling_price' => $sellingPrice,
+                            'negotiated_price' => $negotiatedPrice,
                             'total_profit' => $profit,
+                            'customer_info' => $data['customer_info'],
                             'transaction_date' => $data['transaction_date'],
                         ]);
 
