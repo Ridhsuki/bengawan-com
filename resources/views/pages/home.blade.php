@@ -119,8 +119,52 @@
     <section class="container mx-auto px-4 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <div
-                class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition">
+            <!-- Card 1 - Promo -->
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/promo-cd.webp') }}'); background-size: cover; background-position: center;">
+                <h3 class="font-bold text-lg uppercase mb-1 text-gray-900">PROMO</h3> <!-- Mengubah warna teks -->
+                <p class="text-sm text-gray-800 mb-4">Promo Laptop Terbaru</p> <!-- Mengubah warna teks -->
+                <div>
+                    <a href="{{ route('discount') }}"
+                        class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
+                        Cek disini
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2 - Pricelist -->
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/katalog-cd.webp') }}'); background-size: cover; background-position: center;">
+                <h3 class="font-bold text-lg uppercase mb-1 text-gray-900">PRICELIST</h3> <!-- Mengubah warna teks -->
+                <p class="text-sm text-gray-800 mb-4">Laptop / Notebook</p> <!-- Mengubah warna teks -->
+                <div>
+                    <a href="{{ route('products.index') }}"
+                        class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
+                        Cek disini
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3 - Gaming -->
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/gaming-cd.webp') }}'); background-size: cover; background-position: center;">
+                <h3 class="font-bold text-lg uppercase mb-1 text-gray-900">GAMING</h3> <!-- Mengubah warna teks -->
+                <p class="text-sm text-gray-800 mb-4">All Laptop GAMING</p> <!-- Mengubah warna teks -->
+                <div>
+                    <a href="{{ route('products.index') }}?category=laptop-gaming"
+                        class="bg-white text-gray-800 px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition">
+                        Cek disini
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {{-- <section class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/promo-cd.webp') }}'); background-size: cover; background-position: center;">
                 <h3 class="font-bold text-lg uppercase mb-1">PROMO</h3>
                 <p class="text-sm text-gray-200 mb-4">Promo Laptop Terbaru</p>
                 <div>
@@ -130,9 +174,8 @@
                     </a>
                 </div>
             </div>
-
-            <div
-                class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition">
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/katalog-cd.webp') }}'); background-size: cover; background-position: center;">
                 <h3 class="font-bold text-lg uppercase mb-1">PRICELIST</h3>
                 <p class="text-sm text-gray-200 mb-4">Laptop / Notebook</p>
                 <div>
@@ -142,9 +185,8 @@
                     </a>
                 </div>
             </div>
-
-            <div
-                class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition">
+            <div class="bg-gray-600 p-8 rounded text-white flex flex-col justify-center h-48 hover:bg-gray-700 transition"
+                style="background-image: url('{{ asset('assets/img/gaming-cd.webp') }}'); background-size: cover; background-position: center;">
                 <h3 class="font-bold text-lg uppercase mb-1">GAMING</h3>
                 <p class="text-sm text-gray-200 mb-4">All Laptop GAMING</p>
                 <div>
@@ -156,7 +198,7 @@
             </div>
 
         </div>
-    </section>
+    </section> --}}
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', () => {
