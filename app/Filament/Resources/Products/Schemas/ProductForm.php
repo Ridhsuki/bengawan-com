@@ -109,18 +109,66 @@ class ProductForm
                         ->columnSpan(1),
                 ])->columnSpanFull(),
 
-                Section::make('Marketplace Links')->schema([
-                    TextInput::make('link_shopee')
-                        ->url()
-                        ->label('Link Shopee')
-                        ->maxLength(2001)
-                        ->prefixIcon('heroicon-o-shopping-bag'),
-                    TextInput::make('link_tokopedia')
-                        ->url()
-                        ->label('Link Tokopedia')
-                        ->maxLength(2001)
-                        ->prefixIcon('heroicon-o-shopping-cart')
-                ])->columnSpanFull(),
+                Section::make('Marketplace & Sinkronisasi Shopee')
+                    ->schema([
+                        TextInput::make('link_shopee')
+                            ->url()
+                            ->label('Link Shopee')
+                            ->maxLength(2001)
+                            ->prefixIcon('heroicon-o-shopping-bag'),
+
+                        TextInput::make('link_tokopedia')
+                            ->url()
+                            ->label('Link Tokopedia')
+                            ->maxLength(2001)
+                            ->prefixIcon('heroicon-o-shopping-cart'),
+
+                        Select::make('shopee_shop_id')
+                            ->label('Toko Shopee Terhubung')
+                            ->relationship('shopeeShop', 'shop_name')
+                            ->searchable()
+                            ->preload()
+                            ->helperText('Pilih toko Shopee yang sudah dihubungkan melalui Shopee Open Platform.'),
+
+                        TextInput::make('shopee_item_id')
+                            ->label('Shopee Item ID')
+                            ->numeric()
+                            ->helperText('Ambil dari Seller Centre atau hasil API get_item_list.'),
+
+                        TextInput::make('shopee_model_id')
+                            ->label('Shopee Model ID')
+                            ->numeric()
+                            ->default(0)
+                            ->helperText('Isi 0 jika produk Shopee tidak memiliki variasi.'),
+
+                        TextInput::make('shopee_sku')
+                            ->label('Shopee SKU')
+                            ->maxLength(255)
+                            ->helperText('Gunakan SKU yang sama agar mapping lebih mudah diaudit.'),
+
+                        Toggle::make('sync_shopee_stock')
+                            ->label('Aktifkan Sinkronisasi Stok Shopee')
+                            ->default(false)
+                            ->helperText('Jika aktif, perubahan stok di website akan dikirim ke Shopee.'),
+
+                        TextInput::make('shopee_stock')
+                            ->label('Stok Terakhir dari Shopee')
+                            ->disabled()
+                            ->dehydrated(false),
+
+                        TextInput::make('shopee_sync_status')
+                            ->label('Status Sync')
+                            ->disabled()
+                            ->dehydrated(false),
+
+                        Textarea::make('shopee_sync_error')
+                            ->label('Error Sync Terakhir')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
             ]);
     }
 }

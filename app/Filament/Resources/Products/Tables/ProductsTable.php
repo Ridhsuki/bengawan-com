@@ -8,7 +8,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -78,15 +77,36 @@ class ProductsTable
                     ->extraAttributes(['class' => 'text-red-600 font-bold'])
                     ->toggleable(),
 
-                BadgeColumn::make('stock')
+                TextColumn::make('stock')
                     ->label('stok')
-                    ->colors([
-                        'danger' => fn($state) => $state <= 5,
-                        'warning' => fn($state) => $state > 5 && $state <= 20,
-                        'success' => fn($state) => $state > 20,
-                    ])
+                    ->badge()
+                    ->color(fn($state) => match (true) {
+                        $state <= 5 => 'danger',
+                        $state <= 20 => 'warning',
+                        default => 'success',
+                    })
                     ->sortable()
                     ->numeric(),
+
+                TextColumn::make('shopee_sync_status')
+                    ->label('Shopee Sync')
+                    ->badge()
+                    ->placeholder('belum aktif')
+                    ->color(fn(?string $state): string => match ($state) {
+                        'success' => 'success',
+                        'failed' => 'danger',
+                        'pending' => 'warning',
+                        'restored' => 'info',
+                        default => 'gray',
+                    })
+                    ->toggleable(),
+
+                TextColumn::make('shopee_last_synced_at')
+                    ->label('Sync Terakhir')
+                    ->dateTime('d M Y H:i')
+                    ->placeholder('-')
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('link_shopee')
                     ->label('Shopee')
@@ -199,8 +219,36 @@ class ProductsTable
 
                         // 4. Kurangi stok
                         $record->decrement('stock', $data['quantity']);
+                        $record->refresh();
+
+                        if ($record->canSyncShopeeStock()) {
+                            \App\Jobs\SyncProductStockToShopeeJob::dispatch($record->id);
+                        }
+
                         \Filament\Notifications\Notification::make()
                             ->title('Penjualan berhasil dicatat')
+                            ->success()
+                            ->send();
+                    }),
+                \Filament\Actions\Action::make('sync_shopee_stock')
+                    ->label('Sync Stok Shopee')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->action(function (\App\Models\Product $record) {
+                        if (!$record->canSyncShopeeStock()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Produk belum dikonfigurasi untuk Shopee.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        \App\Jobs\SyncProductStockToShopeeJob::dispatch($record->id);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Sinkronisasi stok dikirim ke queue.')
                             ->success()
                             ->send();
                     }),
