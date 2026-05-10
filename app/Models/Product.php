@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ShopeeShop;
 use Storage;
 
 class Product extends Model
@@ -26,12 +27,26 @@ class Product extends Model
         'is_active',
         'serial_number',
         'cost_price',
+        'shopee_shop_id',
+        'shopee_item_id',
+        'shopee_model_id',
+        'shopee_sku',
+        'sync_shopee_stock',
+        'shopee_stock',
+        'shopee_last_synced_at',
+        'shopee_sync_status',
+        'shopee_sync_error',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
+        'shopee_item_id' => 'integer',
+        'shopee_model_id' => 'integer',
+        'sync_shopee_stock' => 'boolean',
+        'shopee_stock' => 'integer',
+        'shopee_last_synced_at' => 'datetime',
     ];
     public function getRouteKeyName(): string
     {
@@ -93,6 +108,19 @@ class Product extends Model
 
         return $settings->getWhatsappUrl($message);
     }
+
+    public function shopeeShop(): BelongsTo
+    {
+        return $this->belongsTo(ShopeeShop::class, 'shopee_shop_id');
+    }
+
+    public function canSyncShopeeStock(): bool
+    {
+        return $this->sync_shopee_stock
+            && filled($this->shopee_shop_id)
+            && filled($this->shopee_item_id);
+    }
+
     protected static function booted(): void
     {
         static::updating(function ($product) {
