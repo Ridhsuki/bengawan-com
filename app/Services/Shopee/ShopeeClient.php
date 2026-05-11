@@ -128,13 +128,14 @@ class ShopeeClient
     {
         $timestamp = time();
 
+        $query = [
+            'partner_id' => $this->partnerId,
+            'timestamp' => $timestamp,
+            'sign' => $this->publicSign($path, $timestamp),
+        ];
+
         $response = $this->request()
-            ->post($this->host . $path, [
-                'partner_id' => $this->partnerId,
-                'timestamp' => $timestamp,
-                'sign' => $this->publicSign($path, $timestamp),
-                ...$body,
-            ])
+            ->post($this->host . $path . '?' . http_build_query($query), $body)
             ->throw()
             ->json();
 
