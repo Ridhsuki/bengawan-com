@@ -1,7 +1,17 @@
 <?php
 
 return [
-    'host' => env('SHOPEE_HOST', 'https://partner.test-stable.shopeemobile.com'),
+    'host' => env('SHOPEE_HOST', 'https://openplatform.sandbox.test-stable.shopee.sg'),
+
+    'auth_host' => env(
+        'SHOPEE_AUTH_HOST',
+        env('SHOPEE_HOST', 'https://openplatform.sandbox.test-stable.shopee.sg')
+    ),
+
+    'api_host' => env(
+        'SHOPEE_API_HOST',
+        env('SHOPEE_HOST', 'https://openplatform.sandbox.test-stable.shopee.sg')
+    ),
 
     'partner_id' => (int) env('SHOPEE_PARTNER_ID'),
     'partner_key' => env('SHOPEE_PARTNER_KEY'),

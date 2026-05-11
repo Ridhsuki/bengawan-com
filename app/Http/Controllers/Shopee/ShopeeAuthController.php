@@ -29,12 +29,19 @@ class ShopeeAuthController extends Controller
             shopId: $shopId
         );
 
+        if (blank($token['access_token'] ?? null) || blank($token['refresh_token'] ?? null)) {
+            report(new \RuntimeException('Shopee token response tidak berisi access_token atau refresh_token: ' . json_encode($token)));
+
+            return redirect('/admin')
+                ->with('error', 'Gagal menghubungkan toko Shopee. Token tidak diterima dari Shopee.');
+        }
+
         ShopeeShop::updateOrCreate(
             ['shop_id' => $shopId],
             [
                 'shop_name' => 'Shopee Shop #' . $shopId,
-                'access_token' => $token['access_token'] ?? null,
-                'refresh_token' => $token['refresh_token'] ?? null,
+                'access_token' => $token['access_token'],
+                'refresh_token' => $token['refresh_token'],
                 'token_expires_at' => now()->addSeconds((int) ($token['expire_in'] ?? 14400)),
                 'is_active' => true,
             ]

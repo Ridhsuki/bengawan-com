@@ -128,7 +128,7 @@ class ShopeeClient
     {
         $timestamp = time();
 
-        return $this->request()
+        $response = $this->request()
             ->post($this->host . $path, [
                 'partner_id' => $this->partnerId,
                 'timestamp' => $timestamp,
@@ -137,6 +137,8 @@ class ShopeeClient
             ])
             ->throw()
             ->json();
+
+        return $this->validateResponse($response);
     }
 
     private function shopGet(string $path, ShopeeShop $shop, array $query = []): array
