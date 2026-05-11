@@ -124,6 +124,19 @@ class ShopeeClient
         ]);
     }
 
+    public function getItemList(
+        ShopeeShop $shop,
+        int $offset = 0,
+        int $pageSize = 50,
+        string $itemStatus = 'NORMAL'
+    ): array {
+        return $this->shopGet('/api/v2/product/get_item_list', $shop, [
+            'offset' => $offset,
+            'page_size' => $pageSize,
+            'item_status' => $itemStatus,
+        ]);
+    }
+
     private function publicPost(string $path, array $body): array
     {
         $timestamp = time();

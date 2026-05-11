@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $shop_id
+ * @property string|null $access_token
+ * @property string|null $refresh_token
+ * @property \Illuminate\Support\Carbon|null $token_expires_at
+ * @property bool $is_active
+ */
 class ShopeeShop extends Model
 {
     protected $fillable = [
