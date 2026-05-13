@@ -147,7 +147,27 @@ class ProductForm
                             ->afterStateUpdated(function (Set $set) {
                                 $set('shopee_model_id', 0);
                             })
-                            ->helperText('Pilih hanya jika ingin menghubungkan produk Bengawan ke produk Shopee yang sudah ada. Untuk publish produk baru, kosongkan.'),
+                            ->helperText('Pilih hanya jika ingin menghubungkan produk Bengawan ke produk Shopee yang sudah ada. Untuk publish produk baru, kosongkan.')
+                            ->rules([
+                                function (Get $get, $record) {
+                                    return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                        if (blank($value)) {
+                                            return;
+                                        }
+
+                                        $exists = Product::query()
+                                            ->where('shopee_shop_id', $get('shopee_shop_id'))
+                                            ->where('shopee_item_id', $value)
+                                            ->where('shopee_model_id', (int) ($get('shopee_model_id') ?? 0))
+                                            ->when($record, fn($query) => $query->whereKeyNot($record->id))
+                                            ->exists();
+
+                                        if ($exists) {
+                                            $fail('Item Shopee dan model ini sudah terhubung ke produk Bengawan lain. Pilih item/model lain.');
+                                        }
+                                    };
+                                },
+                            ]),
 
                         Select::make('shopee_model_id')
                             ->label('Shopee Model')
@@ -165,7 +185,27 @@ class ProductForm
                             })
                             ->default(0)
                             ->dehydrated(true)
-                            ->helperText('Untuk produk baru tanpa variasi, biarkan 0. Jika menghubungkan item existing dan ada variasi, pilih model dari Shopee.'),
+                            ->helperText('Untuk produk baru tanpa variasi, biarkan 0. Jika menghubungkan item existing dan ada variasi, pilih model dari Shopee.')
+                            ->rules([
+                                function (Get $get, $record) {
+                                    return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                        if (blank($get('shopee_item_id'))) {
+                                            return;
+                                        }
+
+                                        $exists = Product::query()
+                                            ->where('shopee_shop_id', $get('shopee_shop_id'))
+                                            ->where('shopee_item_id', $get('shopee_item_id'))
+                                            ->where('shopee_model_id', (int) ($value ?? 0))
+                                            ->when($record, fn($query) => $query->whereKeyNot($record->id))
+                                            ->exists();
+
+                                        if ($exists) {
+                                            $fail('Model Shopee ini sudah dipakai oleh produk Bengawan lain.');
+                                        }
+                                    };
+                                },
+                            ]),
 
                         TextInput::make('shopee_sku')
                             ->label('Shopee SKU')
@@ -274,6 +314,13 @@ class ProductForm
                             ->label('Status Publish Shopee')
                             ->disabled()
                             ->dehydrated(false),
+
+                        TextInput::make('shopee_item_status')
+                            ->label('Status Item Shopee')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->placeholder('-')
+                            ->helperText('Status item Shopee hasil sinkronisasi atau rekonsiliasi.'),
 
                         Textarea::make('shopee_publish_error')
                             ->label('Error Publish Shopee')

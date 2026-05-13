@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Product;
+use App\Models\Sale;
 use App\Models\ShopeeOrder;
 use App\Models\ShopeeOrderItem;
 use App\Models\ShopeeShop;
@@ -58,6 +59,7 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
             foreach ($items as $item) {
                 $itemId = (int) data_get($item, 'item_id');
                 $modelId = (int) (data_get($item, 'model_id') ?? 0);
+
                 $qty = (int) (
                     data_get($item, 'model_quantity_purchased')
                     ?? data_get($item, 'item_quantity')
@@ -65,10 +67,15 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                     ?? 1
                 );
 
+                $quantity = max(1, $qty);
+
                 $sku = data_get($item, 'model_sku') ?: data_get($item, 'item_sku');
+
                 $unitPrice = data_get($item, 'model_discounted_price')
                     ?? data_get($item, 'model_original_price')
-                    ?? null;
+                    ?? data_get($item, 'item_price')
+                    ?? data_get($item, 'original_price')
+                    ?? 0;
 
                 $product = Product::where('shopee_shop_id', $shop->id)
                     ->where('shopee_item_id', $itemId)
@@ -85,14 +92,37 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                     [
                         'product_id' => $product?->id,
                         'shopee_sku' => $sku,
-                        'quantity' => max(1, $qty),
+                        'quantity' => $quantity,
                         'unit_price' => $unitPrice,
                         'raw_payload' => $item,
                     ]
                 );
 
+                Sale::updateOrCreate(
+                    [
+                        'sales_channel' => 'shopee',
+                        'external_order_sn' => $this->orderSn,
+                        'external_item_id' => $itemId,
+                        'external_model_id' => $modelId,
+                        'product_id' => $product?->id,
+                    ],
+                    [
+                        'quantity' => $quantity,
+                        'cost_price' => $product?->cost_price ?? 0,
+                        'selling_price' => $unitPrice ?? 0,
+                        'negotiated_price' => $unitPrice ?? 0,
+                        'total_profit' => $product
+                            ? (($unitPrice ?? 0) - (float) $product->cost_price) * $quantity
+                            : 0,
+                        'customer_info' => 'Shopee Order ' . $this->orderSn,
+                        'transaction_date' => now(),
+                        'external_status' => $status,
+                        'external_payload' => $item,
+                        'external_synced_at' => now(),
+                    ]
+                );
+
                 if ($product && $this->shouldReduceStock($status) && blank($order->stock_applied_at)) {
-                    $quantity = max(1, $qty);
                     $newStock = max(0, ((int) $product->stock) - $quantity);
 
                     $product->forceFill([
@@ -105,7 +135,6 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                 }
 
                 if ($product && $this->shouldRestoreStock($status) && filled($order->stock_applied_at) && blank($order->stock_restored_at)) {
-                    $quantity = max(1, $qty);
                     $newStock = ((int) $product->stock) + $quantity;
 
                     $product->forceFill([

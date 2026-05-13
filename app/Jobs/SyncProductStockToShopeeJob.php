@@ -64,9 +64,20 @@ class SyncProductStockToShopeeJob implements ShouldQueue, ShouldBeUnique
                     'response_payload' => $response,
                 ]);
             } catch (Throwable $e) {
+                $errorMessage = $e->getMessage();
+
+                if (str_contains($errorMessage, 'product.error_item_not_found')) {
+                    $product->forceFill([
+                        'sync_shopee_stock' => false,
+                        'shopee_publish_status' => 'not_found',
+                        'shopee_item_status' => 'not_found',
+                        'shopee_unlinked_reason' => 'Item Shopee tidak ditemukan saat sinkronisasi stok.',
+                    ])->saveQuietly();
+                }
+
                 $product->forceFill([
                     'shopee_sync_status' => 'failed',
-                    'shopee_sync_error' => $e->getMessage(),
+                    'shopee_sync_error' => $errorMessage,
                 ])->saveQuietly();
 
                 ShopeeSyncLog::create([
@@ -74,7 +85,7 @@ class SyncProductStockToShopeeJob implements ShouldQueue, ShouldBeUnique
                     'shopee_shop_id' => $product->shopee_shop_id,
                     'type' => 'push_stock',
                     'status' => 'failed',
-                    'message' => $e->getMessage(),
+                    'message' => $errorMessage,
                     'request_payload' => [
                         'item_id' => $product->shopee_item_id,
                         'model_id' => $product->shopee_model_id,

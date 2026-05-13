@@ -147,6 +147,18 @@ class ProductsTable
                     })
                     ->toggleable(),
 
+                TextColumn::make('shopee_item_status')
+                    ->label('Status Item Shopee')
+                    ->badge()
+                    ->placeholder('-')
+                    ->color(fn(?string $state): string => match ($state) {
+                        'normal' => 'success',
+                        'deleted' => 'danger',
+                        'not_found' => 'warning',
+                        default => 'gray',
+                    })
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime('d M Y H:i')
@@ -219,6 +231,7 @@ class ProductsTable
                         $profit = ($negotiatedPrice - $cost) * $data['quantity'];
 
                         \App\Models\Sale::create([
+                            'sales_channel' => 'internal',
                             'product_id' => $record->id,
                             'quantity' => $data['quantity'],
                             'cost_price' => $cost,
@@ -227,6 +240,7 @@ class ProductsTable
                             'total_profit' => $profit,
                             'customer_info' => $data['customer_info'],
                             'transaction_date' => $data['transaction_date'],
+                            'external_status' => 'completed',
                         ]);
 
                         // 4. Kurangi stok
@@ -288,15 +302,93 @@ class ProductsTable
                             ->success()
                             ->send();
                     }),
+                \Filament\Actions\Action::make('delete_from_shopee')
+                    ->label('Hapus dari Shopee')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn(\App\Models\Product $record) => filled($record->shopee_item_id) && filled($record->shopee_shop_id))
+                    ->modalHeading('Hapus produk dari Shopee?')
+                    ->modalDescription('Produk akan dihapus dari Shopee. Setelah item Shopee dihapus, stok tidak dapat disinkronkan lagi ke item tersebut.')
+                    ->action(function (\App\Models\Product $record) {
+                        try {
+                            \App\Jobs\DeleteShopeeItemJob::dispatchSync(
+                                productId: $record->id,
+                                shopeeShopId: (int) $record->shopee_shop_id,
+                                itemId: (int) $record->shopee_item_id,
+                            );
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Produk berhasil dihapus dari Shopee.')
+                                ->success()
+                                ->send();
+                        } catch (\Throwable $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal menghapus produk dari Shopee.')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+                \Filament\Actions\Action::make('delete_from_shopee_and_internal')
+                    ->label('Hapus Shopee + Internal')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn(\App\Models\Product $record) => filled($record->shopee_item_id) && filled($record->shopee_shop_id))
+                    ->modalHeading('Hapus produk dari Shopee dan Bengawan?')
+                    ->modalDescription('Aksi ini akan menghapus item Shopee terlebih dahulu. Jika berhasil, produk internal juga akan dihapus.')
+                    ->action(function (\App\Models\Product $record) {
+                        try {
+                            \App\Jobs\DeleteShopeeItemJob::dispatchSync(
+                                productId: $record->id,
+                                shopeeShopId: (int) $record->shopee_shop_id,
+                                itemId: (int) $record->shopee_item_id,
+                            );
+
+                            $record->delete();
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Produk berhasil dihapus dari Shopee dan Bengawan.')
+                                ->success()
+                                ->send();
+                        } catch (\Throwable $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal menghapus produk.')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
-                    DeleteAction::make(),
+
+                    DeleteAction::make()
+                        ->before(function (\App\Models\Product $record) {
+                            if (filled($record->shopee_item_id) && !in_array($record->shopee_item_status, ['deleted', 'not_found'], true)) {
+                                throw \Illuminate\Validation\ValidationException::withMessages([
+                                    'product' => 'Produk ini masih terhubung ke Shopee. Gunakan aksi "Hapus dari Shopee" atau "Hapus Shopee + Internal" terlebih dahulu.',
+                                ]);
+                            }
+                        }),
                 ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            $hasConnectedShopeeProduct = $records->contains(function ($record) {
+                                return filled($record->shopee_item_id)
+                                    && !in_array($record->shopee_item_status, ['deleted', 'not_found'], true);
+                            });
+
+                            if ($hasConnectedShopeeProduct) {
+                                throw \Illuminate\Validation\ValidationException::withMessages([
+                                    'products' => 'Beberapa produk masih terhubung ke Shopee. Hapus dari Shopee terlebih dahulu atau gunakan aksi Hapus Shopee + Internal.',
+                                ]);
+                            }
+                        }),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

@@ -200,6 +200,13 @@ class ShopeeClient
         ]);
     }
 
+    public function deleteItem(ShopeeShop $shop, int $itemId): array
+    {
+        return $this->shopPost('/api/v2/product/delete_item', $shop, [
+            'item_id' => $itemId,
+        ]);
+    }
+
     private function publicPost(string $path, array $body): array
     {
         $timestamp = time();

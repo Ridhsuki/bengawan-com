@@ -48,6 +48,10 @@ class Product extends Model
         'shopee_publish_status',
         'shopee_publish_error',
         'shopee_published_at',
+        'shopee_item_status',
+        'shopee_deleted_at',
+        'shopee_last_checked_at',
+        'shopee_unlinked_reason',
     ];
 
     protected $casts = [
@@ -67,6 +71,8 @@ class Product extends Model
         'shopee_package_height' => 'integer',
         'shopee_logistic_id' => 'integer',
         'shopee_published_at' => 'datetime',
+        'shopee_deleted_at' => 'datetime',
+        'shopee_last_checked_at' => 'datetime',
     ];
     public function getRouteKeyName(): string
     {
@@ -138,7 +144,8 @@ class Product extends Model
     {
         return $this->sync_shopee_stock
             && filled($this->shopee_shop_id)
-            && filled($this->shopee_item_id);
+            && filled($this->shopee_item_id)
+            && !in_array($this->shopee_item_status, ['deleted', 'not_found'], true);
     }
 
     public function isPublishedToShopee(): bool

@@ -16,6 +16,13 @@ class Sale extends Model
         'total_profit',
         'customer_info',
         'transaction_date',
+        'sales_channel',
+        'external_order_sn',
+        'external_item_id',
+        'external_model_id',
+        'external_status',
+        'external_payload',
+        'external_synced_at',
     ];
 
     protected $casts = [
@@ -25,6 +32,8 @@ class Sale extends Model
         'selling_price' => 'decimal:2',
         'negotiated_price' => 'decimal:2',
         'total_profit' => 'decimal:2',
+        'external_payload' => 'array',
+        'external_synced_at' => 'datetime',
     ];
 
     public function product(): BelongsTo
