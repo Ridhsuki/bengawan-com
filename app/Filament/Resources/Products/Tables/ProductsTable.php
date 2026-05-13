@@ -135,6 +135,18 @@ class ProductsTable
                         'danger' => fn($state) => !$state,
                     ]),
 
+                TextColumn::make('shopee_publish_status')
+                    ->label('Publish Shopee')
+                    ->badge()
+                    ->placeholder('belum publish')
+                    ->color(fn(?string $state): string => match ($state) {
+                        'success' => 'success',
+                        'failed' => 'danger',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    })
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime('d M Y H:i')
@@ -227,6 +239,30 @@ class ProductsTable
 
                         \Filament\Notifications\Notification::make()
                             ->title('Penjualan berhasil dicatat')
+                            ->success()
+                            ->send();
+                    }),
+                \Filament\Actions\Action::make('publish_to_shopee')
+                    ->label('Publish to Shopee')
+                    ->icon('heroicon-o-cloud-arrow-up')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->visible(fn(\App\Models\Product $record) => !$record->isPublishedToShopee())
+                    ->action(function (\App\Models\Product $record) {
+                        if (!$record->canPublishToShopee()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Data Shopee belum lengkap.')
+                                ->body('Lengkapi toko, kategori, berat, dimensi, gambar, nama, deskripsi, dan harga sebelum publish.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        \App\Jobs\PublishProductToShopeeJob::dispatch($record->id);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Produk dikirim ke antrean publish Shopee.')
                             ->success()
                             ->send();
                     }),

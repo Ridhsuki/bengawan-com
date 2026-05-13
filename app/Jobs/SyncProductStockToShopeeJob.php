@@ -30,7 +30,7 @@ class SyncProductStockToShopeeJob implements ShouldQueue, ShouldBeUnique
     {
         $product = Product::with('shopeeShop')->find($this->productId);
 
-        if (! $product || ! $product->canSyncShopeeStock()) {
+        if (!$product || !$product->canSyncShopeeStock()) {
             return;
         }
 
@@ -75,6 +75,11 @@ class SyncProductStockToShopeeJob implements ShouldQueue, ShouldBeUnique
                     'type' => 'push_stock',
                     'status' => 'failed',
                     'message' => $e->getMessage(),
+                    'request_payload' => [
+                        'item_id' => $product->shopee_item_id,
+                        'model_id' => $product->shopee_model_id,
+                        'stock' => $product->stock,
+                    ],
                 ]);
 
                 throw $e;

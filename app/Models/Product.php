@@ -36,6 +36,18 @@ class Product extends Model
         'shopee_last_synced_at',
         'shopee_sync_status',
         'shopee_sync_error',
+        'shopee_category_id',
+        'shopee_brand_id',
+        'shopee_brand_name',
+        'shopee_condition',
+        'shopee_weight',
+        'shopee_package_length',
+        'shopee_package_width',
+        'shopee_package_height',
+        'shopee_logistic_id',
+        'shopee_publish_status',
+        'shopee_publish_error',
+        'shopee_published_at',
     ];
 
     protected $casts = [
@@ -47,6 +59,14 @@ class Product extends Model
         'sync_shopee_stock' => 'boolean',
         'shopee_stock' => 'integer',
         'shopee_last_synced_at' => 'datetime',
+        'shopee_category_id' => 'integer',
+        'shopee_brand_id' => 'integer',
+        'shopee_weight' => 'decimal:2',
+        'shopee_package_length' => 'integer',
+        'shopee_package_width' => 'integer',
+        'shopee_package_height' => 'integer',
+        'shopee_logistic_id' => 'integer',
+        'shopee_published_at' => 'datetime',
     ];
     public function getRouteKeyName(): string
     {
@@ -119,6 +139,25 @@ class Product extends Model
         return $this->sync_shopee_stock
             && filled($this->shopee_shop_id)
             && filled($this->shopee_item_id);
+    }
+
+    public function isPublishedToShopee(): bool
+    {
+        return filled($this->shopee_item_id);
+    }
+
+    public function canPublishToShopee(): bool
+    {
+        return filled($this->shopee_shop_id)
+            && filled($this->shopee_category_id)
+            && filled($this->shopee_weight)
+            && filled($this->shopee_package_length)
+            && filled($this->shopee_package_width)
+            && filled($this->shopee_package_height)
+            && filled($this->image)
+            && filled($this->name)
+            && filled($this->description)
+            && filled($this->price);
     }
 
     protected static function booted(): void

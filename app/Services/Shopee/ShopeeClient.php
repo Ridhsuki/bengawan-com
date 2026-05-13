@@ -137,6 +137,47 @@ class ShopeeClient
         ]);
     }
 
+    public function uploadImage(ShopeeShop $shop, string $imagePath): array
+    {
+        $shop = $this->ensureValidToken($shop);
+
+        $path = '/api/v2/media_space/upload_image';
+        $timestamp = time();
+
+        $query = [
+            'partner_id' => $this->partnerId,
+            'timestamp' => $timestamp,
+            'access_token' => $shop->access_token,
+            'shop_id' => (int) $shop->shop_id,
+            'sign' => $this->shopSign($path, $timestamp, $shop),
+        ];
+
+        $response = Http::timeout((int) config('shopee.timeout', 20))
+            ->attach('image', file_get_contents($imagePath), basename($imagePath))
+            ->post($this->host . $path . '?' . http_build_query($query))
+            ->throw()
+            ->json();
+
+        return $this->validateResponse($response);
+    }
+
+    public function addItem(ShopeeShop $shop, array $payload): array
+    {
+        return $this->shopPost('/api/v2/product/add_item', $shop, $payload);
+    }
+
+    public function getModelList(ShopeeShop $shop, int $itemId): array
+    {
+        return $this->shopGet('/api/v2/product/get_model_list', $shop, [
+            'item_id' => $itemId,
+        ]);
+    }
+
+    public function getLogistics(ShopeeShop $shop): array
+    {
+        return $this->shopGet('/api/v2/logistics/get_channel_list', $shop);
+    }
+
     private function publicPost(string $path, array $body): array
     {
         $timestamp = time();

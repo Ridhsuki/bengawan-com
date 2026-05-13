@@ -146,6 +146,67 @@ class ProductForm
                             ->maxLength(255)
                             ->helperText('Gunakan SKU yang sama agar mapping lebih mudah diaudit.'),
 
+                        TextInput::make('shopee_category_id')
+                            ->label('Shopee Category ID')
+                            ->numeric()
+                            ->helperText('Ambil dari kategori Shopee. Untuk testing laptop yang sudah berhasil, bisa gunakan kategori yang sama dari item sandbox.'),
+
+                        TextInput::make('shopee_brand_id')
+                            ->label('Shopee Brand ID')
+                            ->numeric()
+                            ->default(0)
+                            ->helperText('Gunakan 0 untuk NoBrand jika brand belum tersedia.'),
+
+                        TextInput::make('shopee_brand_name')
+                            ->label('Shopee Brand Name')
+                            ->default('NoBrand')
+                            ->maxLength(255),
+
+                        Select::make('shopee_condition')
+                            ->label('Kondisi Shopee')
+                            ->options([
+                                'NEW' => 'NEW',
+                                'USED' => 'USED',
+                            ])
+                            ->default('NEW'),
+
+                        TextInput::make('shopee_weight')
+                            ->label('Berat Paket Shopee')
+                            ->numeric()
+                            ->suffix('kg')
+                            ->helperText('Contoh: 1.43'),
+
+                        TextInput::make('shopee_package_length')
+                            ->label('Panjang Paket')
+                            ->numeric()
+                            ->suffix('cm'),
+
+                        TextInput::make('shopee_package_width')
+                            ->label('Lebar Paket')
+                            ->numeric()
+                            ->suffix('cm'),
+
+                        TextInput::make('shopee_package_height')
+                            ->label('Tinggi Paket')
+                            ->numeric()
+                            ->suffix('cm'),
+
+                        TextInput::make('shopee_logistic_id')
+                            ->label('Shopee Logistic ID')
+                            ->numeric()
+                            ->helperText('Gunakan logistic_id dari item sandbox atau hasil API logistic.'),
+
+                        TextInput::make('shopee_publish_status')
+                            ->label('Status Publish Shopee')
+                            ->disabled()
+                            ->dehydrated(false),
+
+                        Textarea::make('shopee_publish_error')
+                            ->label('Error Publish Shopee')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+
                         Toggle::make('sync_shopee_stock')
                             ->label('Aktifkan Sinkronisasi Stok Shopee')
                             ->default(false)
