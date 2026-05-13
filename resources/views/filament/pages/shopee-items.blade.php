@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="space-y-6">
         <x-filament::section>
             <x-slot name="heading">
                 Daftar Produk Shopee Sandbox
@@ -12,75 +12,60 @@
 
         @if (empty($items))
             <x-filament::section>
-                <p style="font-size: 0.875rem; color: #6b7280;">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
                     Belum ada produk Shopee yang ditemukan. Pastikan toko sudah authorize dan produk sudah dibuat di
                     Shopee Seller Sandbox.
                 </p>
             </x-filament::section>
         @else
             <x-filament::section>
-                <div class="fi-ta-content"
-                    style="position: relative; overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                    <table class="fi-ta-table"
-                        style="width: 100%; table-layout: auto; text-align: left; border-collapse: collapse;">
-                        <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                <div
+                    class="fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:bg-white/5">
+                    <table class="fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5">
+                        <thead class="bg-gray-50 dark:bg-white/5">
                             <tr>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem; padding-left: 1.5rem;">
+                                <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     Produk</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem;">Item ID</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem;">SKU</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem;">Stok</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem;">Harga</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem;">Status</th>
-                                <th class="fi-ta-header-cell" style="padding: 0.875rem 0.75rem; padding-right: 1.5rem;">
-                                    Model</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5">Item ID</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5">SKU</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5">Stok</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5">Harga</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5">Status</th>
+                                <th class="fi-ta-header-cell px-3 py-3.5 sm:last-of-type:pe-6">Model</th>
                             </tr>
                         </thead>
-                        <tbody style="white-space: nowrap;">
+                        <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
                             @foreach ($items as $item)
-                                <tr class="fi-ta-row"
-                                    style="background-color: #ffffff; border-bottom: 1px solid #e5e7eb;">
-                                    <td class="fi-ta-cell" style="padding: 1rem 0.75rem; padding-left: 1.5rem;">
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <tr class="fi-ta-row bg-white dark:bg-gray-900">
+                                    <td class="fi-ta-cell px-3 py-4 sm:first-of-type:ps-6">
+                                        <div class="flex items-center gap-3">
                                             @if ($item['image'])
                                                 <img src="{{ $item['image'] }}"
-                                                    style="height: 2.5rem; width: 2.5rem; border-radius: 0.5rem; object-fit: cover;"
-                                                    alt="">
+                                                    class="h-10 w-10 rounded-lg object-cover" alt="">
                                             @endif
                                             <div>
-                                                <div style="font-size: 0.875rem; font-weight: 500; color: #030712;">
+                                                <div class="text-sm font-medium text-gray-950 dark:text-white">
                                                     {{ $item['item_name'] }}
                                                 </div>
-                                                <div style="font-size: 0.75rem; color: #6b7280;">
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">
                                                     Category ID: {{ $item['category_id'] }}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-family: monospace; font-size: 0.875rem; color: #4b5563;">
-                                        {{ $item['item_id'] }}
-                                    </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-size: 0.875rem; color: #4b5563;">
-                                        {{ $item['item_sku'] }}
-                                    </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-size: 0.875rem; color: #4b5563;">
-                                        {{ $item['stock'] }}
-                                    </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-size: 0.875rem; color: #4b5563;">
-                                        Rp{{ number_format((float) $item['price'], 0, ',', '.') }}
-                                    </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-size: 0.875rem; color: #4b5563;">
-                                        {{ $item['status'] }}
-                                    </td>
-                                    <td class="fi-ta-cell"
-                                        style="padding: 1rem 0.75rem; font-size: 0.875rem; color: #4b5563; padding-right: 1.5rem;">
-                                        {{ $item['has_model'] ? 'Ada variasi' : 'Tanpa variasi' }}
-                                    </td>
+                                    <td class="fi-ta-cell px-3 py-4 font-mono text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $item['item_id'] }}</td>
+                                    <td class="fi-ta-cell px-3 py-4 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $item['item_sku'] }}</td>
+                                    <td class="fi-ta-cell px-3 py-4 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $item['stock'] }}</td>
+                                    <td class="fi-ta-cell px-3 py-4 text-sm text-gray-600 dark:text-gray-400">
+                                        Rp{{ number_format((float) $item['price'], 0, ',', '.') }}</td>
+                                    <td class="fi-ta-cell px-3 py-4 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $item['status'] }}</td>
+                                    <td
+                                        class="fi-ta-cell px-3 py-4 text-sm text-gray-600 dark:text-gray-400 sm:last-of-type:pe-6">
+                                        {{ $item['has_model'] ? 'Ada variasi' : 'Tanpa variasi' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
