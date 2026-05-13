@@ -49,6 +49,10 @@ class PublishProductToShopeeJob implements ShouldQueue
         try {
             $imagePath = Storage::disk('public')->path($product->image);
 
+            if (!is_file($imagePath)) {
+                throw new \RuntimeException('File gambar produk tidak ditemukan: ' . $imagePath);
+            }
+
             $uploadResponse = $client->uploadImage($product->shopeeShop, $imagePath);
 
             $imageId = data_get($uploadResponse, 'response.image_info.image_id')
@@ -64,39 +68,42 @@ class PublishProductToShopeeJob implements ShouldQueue
                 'item_name' => str($product->name)->limit(120, '')->toString(),
                 'description' => $product->description ?: $product->name,
                 'category_id' => (int) $product->shopee_category_id,
+
                 'brand' => [
                     'brand_id' => (int) ($product->shopee_brand_id ?? 0),
                     'original_brand_name' => $product->shopee_brand_name ?: 'NoBrand',
                 ],
+
                 'item_sku' => $product->shopee_sku ?: $product->serial_number ?: ('BGW-' . $product->id),
                 'condition' => $product->shopee_condition ?: 'NEW',
-                'price_info' => [
+
+                'original_price' => (float) ($product->discount_price ?: $product->price),
+
+                'seller_stock' => [
                     [
-                        'original_price' => (float) ($product->discount_price ?: $product->price),
+                        'stock' => max(0, (int) $product->stock),
                     ],
                 ],
-                'stock_info' => [
-                    'seller_stock' => [
-                        [
-                            'stock' => max(0, (int) $product->stock),
-                        ],
-                    ],
-                ],
+
                 'weight' => (float) $product->shopee_weight,
+
                 'dimension' => [
                     'package_length' => (int) $product->shopee_package_length,
                     'package_width' => (int) $product->shopee_package_width,
                     'package_height' => (int) $product->shopee_package_height,
                 ],
+
                 'logistic_info' => [
                     [
                         'logistic_id' => (int) $product->shopee_logistic_id,
                         'enabled' => true,
                     ],
                 ],
+
                 'image' => [
                     'image_id_list' => [$imageId],
                 ],
+
                 'pre_order' => [
                     'is_pre_order' => false,
                     'days_to_ship' => 2,
@@ -145,6 +152,7 @@ class PublishProductToShopeeJob implements ShouldQueue
                 'type' => 'publish_product',
                 'status' => 'failed',
                 'message' => $e->getMessage(),
+                'request_payload' => $payload ?? null,
             ]);
 
             throw $e;
