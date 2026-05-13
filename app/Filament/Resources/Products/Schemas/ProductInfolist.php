@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
@@ -85,22 +86,138 @@ class ProductInfolist
                             ->color(fn(bool $state) => $state ? 'success' : 'gray'),
                     ]),
 
-                Section::make('Marketplace Links')
-                    ->icon('heroicon-o-link')
-                    ->columns(2)
+                Section::make('Pengiriman & Link Marketplace')
+                    ->icon('heroicon-o-truck')
                     ->schema([
-                        TextEntry::make('link_shopee')
-                            ->label('Shopee')
-                            ->url(fn($state) => $state)
-                            ->openUrlInNewTab()
-                            ->color('warning')
-                            ->formatStateUsing(fn($state) => $state ? 'Shopee' : '-'),
-                        TextEntry::make('link_tokopedia')
-                            ->label('Tokopedia')
-                            ->url(fn($state) => $state)
-                            ->openUrlInNewTab()
-                            ->color('success')
-                            ->formatStateUsing(fn($state) => $state ? 'Tokopedia' : '-'),
+                        Fieldset::make('Dimensi & Berat Paket')
+                            ->columns(4)
+                            ->schema([
+                                TextEntry::make('shopee_weight')
+                                    ->label('Berat')
+                                    ->numeric()
+                                    ->suffix(' kg')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_package_length')
+                                    ->label('Panjang')
+                                    ->numeric()
+                                    ->suffix(' cm')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_package_width')
+                                    ->label('Lebar')
+                                    ->numeric()
+                                    ->suffix(' cm')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_package_height')
+                                    ->label('Tinggi')
+                                    ->numeric()
+                                    ->suffix(' cm')
+                                    ->placeholder('-'),
+                            ]),
+
+                        Fieldset::make('Tautan Eksternal')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('link_shopee')
+                                    ->label('Shopee')
+                                    ->url(fn($state) => $state)
+                                    ->openUrlInNewTab()
+                                    ->color('warning')
+                                    ->formatStateUsing(fn($state) => $state ? 'Buka di Shopee' : 'Belum ditautkan'),
+                                TextEntry::make('link_tokopedia')
+                                    ->label('Tokopedia')
+                                    ->url(fn($state) => $state)
+                                    ->openUrlInNewTab()
+                                    ->color('success')
+                                    ->formatStateUsing(fn($state) => $state ? 'Buka di Tokopedia' : 'Belum ditautkan'),
+                            ]),
+                    ]),
+
+                Section::make('Sinkronisasi Shopee')
+                    ->icon('heroicon-o-arrow-path')
+                    ->collapsed()
+                    ->schema([
+                        Fieldset::make('Konfigurasi API')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('shopeeShop.shop_name')
+                                    ->label('Toko Terhubung')
+                                    ->placeholder('Belum dipilih'),
+                                TextEntry::make('shopee_sku')
+                                    ->label('Shopee SKU')
+                                    ->copyable()
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_item_id')
+                                    ->label('Item ID')
+                                    ->copyable()
+                                    ->placeholder('Produk Baru'),
+                                TextEntry::make('shopee_model_id')
+                                    ->label('Model ID')
+                                    ->copyable()
+                                    ->placeholder('-'),
+                            ]),
+
+                        Fieldset::make('Kategorisasi Shopee')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('shopee_category_id')
+                                    ->label('Kategori ID')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_brand_name')
+                                    ->label('Brand')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_condition')
+                                    ->label('Kondisi')
+                                    ->badge()
+                                    ->color(fn($state) => $state === 'NEW' ? 'success' : 'warning'),
+                                TextEntry::make('shopee_logistic_id')
+                                    ->label('ID Logistik')
+                                    ->placeholder('-'),
+                            ]),
+
+                        Fieldset::make('Status Sinkronisasi')
+                            ->columns(3)
+                            ->schema([
+                                IconEntry::make('sync_shopee_stock')
+                                    ->label('Auto-Sync Aktif')
+                                    ->boolean(),
+                                TextEntry::make('shopee_stock')
+                                    ->label('Stok di Shopee')
+                                    ->badge()
+                                    ->color('info')
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_publish_status')
+                                    ->label('Publish Status')
+                                    ->badge()
+                                    ->color(fn($state) => match ($state) {
+                                        'SUCCESS' => 'success',
+                                        'FAILED' => 'danger',
+                                        'PROCESSING' => 'warning',
+                                        default => 'gray',
+                                    })
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_item_status')
+                                    ->label('Item Status')
+                                    ->badge()
+                                    ->placeholder('-'),
+                                TextEntry::make('shopee_sync_status')
+                                    ->label('Sync Status')
+                                    ->badge()
+                                    ->placeholder('-'),
+                            ]),
+
+                        Fieldset::make('Log Error')
+                            ->columns(1)
+                            ->visible(fn($record) => !empty($record->shopee_publish_error) || !empty($record->shopee_sync_error))
+                            ->schema([
+                                TextEntry::make('shopee_publish_error')
+                                    ->label('Error Publish Terakhir')
+                                    ->color('danger')
+                                    ->visible(fn($state) => filled($state)),
+                                TextEntry::make('shopee_sync_error')
+                                    ->label('Error Sync Terakhir')
+                                    ->color('danger')
+                                    ->visible(fn($state) => filled($state)),
+                            ]),
                     ]),
 
                 Section::make('Product Gallery')
@@ -165,10 +282,10 @@ class ProductInfolist
                     ->columns(2)
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Created At')
+                            ->label('Dibuat Pada')
                             ->dateTime('d M Y H:i'),
                         TextEntry::make('updated_at')
-                            ->label('Updated At')
+                            ->label('Diupdate Pada')
                             ->dateTime('d M Y H:i'),
                     ]),
             ]);
