@@ -130,76 +130,81 @@
 
         .shp-pagination-wrapper {
             margin-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 1.5rem
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb
         }
 
         .shp-pagination-wrapper nav {
             display: flex;
-            flex-direction: column;
-            gap: 1rem
+            align-items: center;
+            justify-content: space-between;
+            width: 100%
+        }
+
+        .shp-pagination-wrapper nav>div:nth-child(1) {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+            gap: .5rem
+        }
+
+        .shp-pagination-wrapper nav>div:nth-child(2) {
+            display: none
         }
 
         @media (min-width:640px) {
-            .shp-pagination-wrapper nav {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center
+            .shp-pagination-wrapper nav>div:nth-child(1) {
+                display: none
+            }
+
+            .shp-pagination-wrapper nav>div:nth-child(2) {
+                display: flex;
+                flex: 1;
+                align-items: center;
+                justify-content: space-between
             }
         }
 
-        .shp-pagination-wrapper p {
+        .shp-pagination-wrapper nav p {
             font-size: .875rem;
             color: #6b7280;
             margin: 0
         }
 
-        .shp-pagination-wrapper .isolate {
-            display: inline-flex;
-            border-radius: .5rem;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05)
+        .shp-pagination-wrapper nav p span {
+            font-weight: 600;
+            color: #111827
         }
 
+        .shp-pagination-wrapper button,
         .shp-pagination-wrapper a,
-        .shp-pagination-wrapper span.relative {
+        .shp-pagination-wrapper span[aria-disabled] {
             position: relative;
             display: inline-flex;
             align-items: center;
-            padding: .5rem .875rem;
+            padding: .5rem 1rem;
             font-size: .875rem;
             font-weight: 500;
-            border: 1px solid #e5e7eb;
-            background-color: #fff;
             color: #4b5563;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
             text-decoration: none;
-            transition: all 0.2s;
-            margin-left: -1px
+            cursor: pointer;
+            transition: background-color 0.2s
         }
 
+        .shp-pagination-wrapper button:hover,
         .shp-pagination-wrapper a:hover {
             background-color: #f9fafb;
             color: #111827;
             z-index: 2
         }
 
-        .shp-pagination-wrapper span[aria-current="page"]>span {
-            background-color: #f3f4f6;
-            color: #111827;
-            font-weight: 600;
-            z-index: 10;
-            cursor: default
-        }
-
-        .shp-pagination-wrapper .isolate>:first-child,
-        .shp-pagination-wrapper .isolate>:first-child span {
-            border-top-left-radius: .5rem;
-            border-bottom-left-radius: .5rem
-        }
-
-        .shp-pagination-wrapper .isolate>:last-child,
-        .shp-pagination-wrapper .isolate>:last-child span {
-            border-top-right-radius: .5rem;
-            border-bottom-right-radius: .5rem
+        .shp-pagination-wrapper button[disabled],
+        .shp-pagination-wrapper span[aria-disabled] {
+            color: #9ca3af;
+            cursor: not-allowed;
+            background-color: #f9fafb
         }
 
         .shp-pagination-wrapper svg {
@@ -207,29 +212,81 @@
             height: 1.25rem
         }
 
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child>span {
+            display: inline-flex;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
+            border-radius: .375rem
+        }
+
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child button,
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child a,
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child span[aria-disabled],
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child span[aria-current]>span {
+            margin-left: -1px
+        }
+
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child>span>span:first-child button,
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child>span>span:first-child span {
+            border-top-left-radius: .375rem;
+            border-bottom-left-radius: .375rem
+        }
+
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child>span>span:last-child button,
+        .shp-pagination-wrapper nav>div:nth-child(2)>div:last-child>span>span:last-child span {
+            border-top-right-radius: .375rem;
+            border-bottom-right-radius: .375rem
+        }
+
+        .shp-pagination-wrapper span[aria-current="page"]>span {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            padding: .5rem 1rem;
+            font-size: .875rem;
+            font-weight: 600;
+            color: #172D9D;
+            background-color: #eff6ff;
+            border: 1px solid #e5e7eb;
+            z-index: 10;
+            margin-left: -1px
+        }
+
         :is(.dark .shp-pagination-wrapper) {
             border-color: rgb(255 255 255 / .1)
         }
 
-        :is(.dark .shp-pagination-wrapper p) {
+        :is(.dark .shp-pagination-wrapper nav p) {
             color: #9ca3af
         }
 
+        :is(.dark .shp-pagination-wrapper nav p span) {
+            color: #fff
+        }
+
+        :is(.dark .shp-pagination-wrapper button),
         :is(.dark .shp-pagination-wrapper a),
-        :is(.dark .shp-pagination-wrapper span.relative) {
+        :is(.dark .shp-pagination-wrapper span[aria-disabled]) {
             background-color: rgb(255 255 255 / .05);
             border-color: rgb(255 255 255 / .1);
             color: #9ca3af
         }
 
+        :is(.dark .shp-pagination-wrapper button:hover),
         :is(.dark .shp-pagination-wrapper a:hover) {
             background-color: rgb(255 255 255 / .1);
             color: #fff
         }
 
+        :is(.dark .shp-pagination-wrapper button[disabled]),
+        :is(.dark .shp-pagination-wrapper span[aria-disabled]) {
+            color: #4b5563;
+            background-color: #fff0
+        }
+
         :is(.dark .shp-pagination-wrapper span[aria-current="page"]>span) {
             background-color: rgb(255 255 255 / .15);
-            color: #fff
+            color: #fff;
+            border-color: rgb(255 255 255 / .1)
         }
     </style>
 
@@ -242,7 +299,6 @@
 
         <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
             <div style="flex: 1; min-width: 250px;">
-                {{-- Gunakan UI native Filament. wire:model.live.debounce.500ms mengurangi beban server saat mengetik --}}
                 <x-filament::input.wrapper prefix-icon="heroicon-m-magnifying-glass">
                     <x-filament::input type="search" wire:model.live.debounce.500ms="search"
                         placeholder="Cari nama produk, SKU, atau Item ID..." />
@@ -260,17 +316,14 @@
                 </x-filament::input.wrapper>
             </div>
 
-            {{-- Loading spinner otomatis saat searching --}}
             <div wire:loading wire:target="search, statusFilter">
                 <x-filament::loading-indicator class="h-5 w-5" />
             </div>
         </div>
 
-        {{-- Bungkus data tabel dengan wire:loading.class agar terlihat redup saat loading --}}
         <div wire:loading.class="shp-loading" wire:target="search, statusFilter, gotoPage, nextPage, previousPage">
             @if ($this->getPaginatedItems->isEmpty())
                 <div class="shp-box" style="text-align: center; padding: 3rem 1rem;">
-                    {{-- <x-filament::icon icon="heroicon-o-x-circle" class="h-12 w-12 mx-auto text-gray-400 mb-2" /> --}}
                     <h3 class="shp-title">Tidak ada data ditemukan</h3>
                     <p class="shp-desc">Coba sesuaikan kata kunci pencarian atau filter status Anda.</p>
                 </div>
@@ -295,7 +348,7 @@
                                             @if ($item['image'])
                                                 <img src="{{ $item['image'] }}"
                                                     style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; object-fit: cover;"
-                                                    alt="">
+                                                    alt="Product Image" loading="lazy">
                                             @endif
                                             <div>
                                                 <div class="shp-title" style="font-size: 0.875rem;">
@@ -329,7 +382,7 @@
                                 @if ($item['image'])
                                     <img src="{{ $item['image'] }}"
                                         style="width: 3rem; height: 3rem; border-radius: 0.5rem; object-fit: cover;"
-                                        alt="">
+                                        alt="Product Image" loading="lazy">
                                 @endif
                                 <div>
                                     <div class="shp-title" style="font-size: 0.875rem;">{{ $item['item_name'] }}</div>
