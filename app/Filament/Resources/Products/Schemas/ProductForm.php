@@ -9,6 +9,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Repeater;
+use App\Services\Shopee\ShopeeCatalogService;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -101,6 +103,7 @@ class ProductForm
                     TextInput::make('stock')
                         ->numeric()
                         ->default(1)
+                        ->required()
                         ->label('Stok Produk')
                         ->columnSpan(1),
                     Toggle::make('is_active')
@@ -130,36 +133,91 @@ class ProductForm
                             ->preload()
                             ->helperText('Pilih toko Shopee yang sudah dihubungkan melalui Shopee Open Platform.'),
 
-                        TextInput::make('shopee_item_id')
-                            ->label('Shopee Item ID')
-                            ->numeric()
-                            ->helperText('Ambil dari Seller Centre atau hasil API get_item_list.'),
+                        Select::make('shopee_item_id')
+                            ->label('Shopee Item')
+                            ->searchable()
+                            ->preload(false)
+                            ->getSearchResultsUsing(
+                                fn(string $search): array => app(ShopeeCatalogService::class)->itemOptions($search)
+                            )
+                            ->getOptionLabelUsing(
+                                fn($value): ?string => app(ShopeeCatalogService::class)->itemLabel((int) $value)
+                            )
+                            ->live()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('shopee_model_id', 0);
+                            })
+                            ->helperText('Pilih hanya jika produk Bengawan ingin dihubungkan ke item Shopee yang sudah ada. Untuk produk baru yang akan dipublish, kosongkan field ini.'),
 
-                        TextInput::make('shopee_model_id')
-                            ->label('Shopee Model ID')
-                            ->numeric()
+                        Select::make('shopee_model_id')
+                            ->label('Shopee Model')
+                            ->searchable()
+                            ->options(function (Get $get): array {
+                                return app(ShopeeCatalogService::class)->modelOptions(
+                                    $get('shopee_item_id') ? (int) $get('shopee_item_id') : null
+                                );
+                            })
+                            ->getOptionLabelUsing(function ($value, Get $get): ?string {
+                                return app(ShopeeCatalogService::class)->modelLabel(
+                                    $get('shopee_item_id') ? (int) $get('shopee_item_id') : null,
+                                    $value !== null ? (int) $value : null
+                                );
+                            })
                             ->default(0)
-                            ->helperText('Isi 0 jika produk Shopee tidak memiliki variasi.'),
+                            ->helperText('Jika item tidak memiliki variasi, gunakan 0. Jika ada variasi, pilih model dari API Shopee.'),
 
                         TextInput::make('shopee_sku')
                             ->label('Shopee SKU')
                             ->maxLength(255)
                             ->helperText('Gunakan SKU yang sama agar mapping lebih mudah diaudit.'),
 
-                        TextInput::make('shopee_category_id')
-                            ->label('Shopee Category ID')
-                            ->numeric()
-                            ->helperText('Ambil dari kategori Shopee. Untuk testing laptop yang sudah berhasil, bisa gunakan kategori yang sama dari item sandbox.'),
+                        Select::make('shopee_category_id')
+                            ->label('Shopee Category')
+                            ->searchable()
+                            ->preload(false)
+                            ->getSearchResultsUsing(
+                                fn(string $search): array => app(ShopeeCatalogService::class)->categoryOptions($search)
+                            )
+                            ->getOptionLabelUsing(
+                                fn($value): ?string => app(ShopeeCatalogService::class)->categoryLabel((int) $value)
+                            )
+                            ->live()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('shopee_brand_id', 0);
+                                $set('shopee_brand_name', 'NoBrand');
+                            })
+                            ->helperText('Pilih kategori Shopee dari API. Wajib untuk publish produk baru ke Shopee.'),
 
-                        TextInput::make('shopee_brand_id')
-                            ->label('Shopee Brand ID')
-                            ->numeric()
+                        Select::make('shopee_brand_id')
+                            ->label('Shopee Brand')
+                            ->searchable()
+                            ->options(function (Get $get): array {
+                                return app(ShopeeCatalogService::class)->brandOptions(
+                                    $get('shopee_category_id') ? (int) $get('shopee_category_id') : null
+                                );
+                            })
+                            ->getOptionLabelUsing(function ($value, Get $get): ?string {
+                                return app(ShopeeCatalogService::class)->brandLabel(
+                                    $value !== null ? (int) $value : null,
+                                    $get('shopee_category_id') ? (int) $get('shopee_category_id') : null
+                                );
+                            })
                             ->default(0)
-                            ->helperText('Gunakan 0 untuk NoBrand jika brand belum tersedia.'),
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state, Get $get) {
+                                $label = app(ShopeeCatalogService::class)->brandLabel(
+                                    $state !== null ? (int) $state : null,
+                                    $get('shopee_category_id') ? (int) $get('shopee_category_id') : null
+                                );
+
+                                $set('shopee_brand_name', $label ?: 'NoBrand');
+                            })
+                            ->helperText('Brand diambil dari kategori Shopee. Gunakan NoBrand jika brand belum tersedia.'),
 
                         TextInput::make('shopee_brand_name')
                             ->label('Shopee Brand Name')
                             ->default('NoBrand')
+                            ->readOnly()
                             ->maxLength(255),
 
                         Select::make('shopee_condition')
@@ -191,10 +249,14 @@ class ProductForm
                             ->numeric()
                             ->suffix('cm'),
 
-                        TextInput::make('shopee_logistic_id')
-                            ->label('Shopee Logistic ID')
-                            ->numeric()
-                            ->helperText('Gunakan logistic_id dari item sandbox atau hasil API logistic.'),
+                        Select::make('shopee_logistic_id')
+                            ->label('Shopee Logistic')
+                            ->searchable()
+                            ->options(fn(): array => app(ShopeeCatalogService::class)->logisticOptions())
+                            ->getOptionLabelUsing(
+                                fn($value): ?string => app(ShopeeCatalogService::class)->logisticLabel((int) $value)
+                            )
+                            ->helperText('Pilih channel logistik aktif dari Shopee. Wajib untuk publish produk baru.'),
 
                         TextInput::make('shopee_publish_status')
                             ->label('Status Publish Shopee')

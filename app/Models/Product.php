@@ -154,6 +154,7 @@ class Product extends Model
             && filled($this->shopee_package_length)
             && filled($this->shopee_package_width)
             && filled($this->shopee_package_height)
+            && filled($this->shopee_logistic_id)
             && filled($this->image)
             && filled($this->name)
             && filled($this->description)

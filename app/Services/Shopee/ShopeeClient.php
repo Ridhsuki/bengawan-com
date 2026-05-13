@@ -178,6 +178,28 @@ class ShopeeClient
         return $this->shopGet('/api/v2/logistics/get_channel_list', $shop);
     }
 
+    public function getCategories(ShopeeShop $shop, ?int $parentCategoryId = null, string $language = 'id'): array
+    {
+        return $this->shopGet('/api/v2/product/get_category', $shop, array_filter([
+            'parent_category_id' => $parentCategoryId,
+            'language' => $language,
+        ], fn($value) => $value !== null));
+    }
+
+    public function getBrandList(
+        ShopeeShop $shop,
+        int $categoryId,
+        int $offset = 0,
+        int $pageSize = 100
+    ): array {
+        return $this->shopGet('/api/v2/product/get_brand_list', $shop, [
+            'category_id' => $categoryId,
+            'offset' => $offset,
+            'page_size' => $pageSize,
+            'status' => 1,
+        ]);
+    }
+
     private function publicPost(string $path, array $body): array
     {
         $timestamp = time();

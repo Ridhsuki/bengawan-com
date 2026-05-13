@@ -24,7 +24,7 @@ class PublishProductToShopeeJob implements ShouldQueue
     {
         $product = Product::with('shopeeShop')->find($this->productId);
 
-        if (! $product || ! $product->shopeeShop) {
+        if (!$product || !$product->shopeeShop) {
             return;
         }
 
@@ -32,7 +32,7 @@ class PublishProductToShopeeJob implements ShouldQueue
             return;
         }
 
-        if (! $product->canPublishToShopee()) {
+        if (!$product->canPublishToShopee()) {
             $product->forceFill([
                 'shopee_publish_status' => 'failed',
                 'shopee_publish_error' => 'Data produk untuk publish ke Shopee belum lengkap.',
@@ -40,6 +40,11 @@ class PublishProductToShopeeJob implements ShouldQueue
 
             return;
         }
+
+        $product->forceFill([
+            'shopee_publish_status' => 'pending',
+            'shopee_publish_error' => null,
+        ])->saveQuietly();
 
         try {
             $imagePath = Storage::disk('public')->path($product->image);
@@ -71,11 +76,9 @@ class PublishProductToShopeeJob implements ShouldQueue
                     ],
                 ],
                 'stock_info' => [
-                    [
-                        'seller_stock' => [
-                            [
-                                'stock' => max(0, (int) $product->stock),
-                            ],
+                    'seller_stock' => [
+                        [
+                            'stock' => max(0, (int) $product->stock),
                         ],
                     ],
                 ],

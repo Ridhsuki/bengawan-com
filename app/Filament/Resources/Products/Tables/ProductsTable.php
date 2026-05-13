@@ -252,7 +252,7 @@ class ProductsTable
                         if (!$record->canPublishToShopee()) {
                             \Filament\Notifications\Notification::make()
                                 ->title('Data Shopee belum lengkap.')
-                                ->body('Lengkapi toko, kategori, berat, dimensi, gambar, nama, deskripsi, dan harga sebelum publish.')
+                                ->body('Lengkapi toko, kategori Shopee, brand, logistik, berat, dimensi, gambar, nama, deskripsi, harga, dan stok sebelum publish.')
                                 ->danger()
                                 ->send();
 
