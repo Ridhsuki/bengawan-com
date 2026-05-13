@@ -7,12 +7,62 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\ShopeeShop;
+use Illuminate\Support\Carbon;
 use Storage;
 
+/**
+ * @property int $id
+ * @property int|null $category_id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $description
+ * @property string|null $image
+ *
+ * @property string|null $serial_number
+ * @property float $cost_price
+ * @property float $price
+ * @property float|null $discount_price
+ * @property int|null $discount_percentage
+ * @property int $stock
+ * @property bool $is_active
+ *
+ * @property string|null $link_shopee
+ * @property string|null $link_tokopedia
+ *
+ * @property int|null $shopee_shop_id
+ * @property int|string|null $shopee_item_id
+ * @property int|string|null $shopee_model_id
+ * @property string|null $shopee_sku
+ * @property int|string|null $shopee_category_id
+ * @property int|string|null $shopee_brand_id
+ * @property string|null $shopee_brand_name
+ * @property string|null $shopee_condition
+ * @property float|null $shopee_weight
+ * @property float|null $shopee_package_length
+ * @property float|null $shopee_package_width
+ * @property float|null $shopee_package_height
+ * @property int|string|null $shopee_logistic_id
+ * @property bool $sync_shopee_stock
+ * @property int|null $shopee_stock
+ *
+ * @property string|null $shopee_publish_status
+ * @property string|null $shopee_item_status
+ * @property string|null $shopee_sync_status
+ * @property string|null $shopee_publish_error
+ * @property string|null $shopee_sync_error
+ * @property string|null $shopee_unlinked_reason
+ * @property Carbon|null $shopee_last_synced_at
+ *
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\ShopeeShop|null $shopeeShop
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductImage[] $images
+ */
 class Product extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'category_id',
         'name',
