@@ -127,6 +127,110 @@
             pointer-events: none;
             transition: opacity 0.2s
         }
+
+        .shp-pagination-wrapper {
+            margin-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1.5rem
+        }
+
+        .shp-pagination-wrapper nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem
+        }
+
+        @media (min-width:640px) {
+            .shp-pagination-wrapper nav {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center
+            }
+        }
+
+        .shp-pagination-wrapper p {
+            font-size: .875rem;
+            color: #6b7280;
+            margin: 0
+        }
+
+        .shp-pagination-wrapper .isolate {
+            display: inline-flex;
+            border-radius: .5rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05)
+        }
+
+        .shp-pagination-wrapper a,
+        .shp-pagination-wrapper span.relative {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            padding: .5rem .875rem;
+            font-size: .875rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+            background-color: #fff;
+            color: #4b5563;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-left: -1px
+        }
+
+        .shp-pagination-wrapper a:hover {
+            background-color: #f9fafb;
+            color: #111827;
+            z-index: 2
+        }
+
+        .shp-pagination-wrapper span[aria-current="page"]>span {
+            background-color: #f3f4f6;
+            color: #111827;
+            font-weight: 600;
+            z-index: 10;
+            cursor: default
+        }
+
+        .shp-pagination-wrapper .isolate>:first-child,
+        .shp-pagination-wrapper .isolate>:first-child span {
+            border-top-left-radius: .5rem;
+            border-bottom-left-radius: .5rem
+        }
+
+        .shp-pagination-wrapper .isolate>:last-child,
+        .shp-pagination-wrapper .isolate>:last-child span {
+            border-top-right-radius: .5rem;
+            border-bottom-right-radius: .5rem
+        }
+
+        .shp-pagination-wrapper svg {
+            width: 1.25rem;
+            height: 1.25rem
+        }
+
+        :is(.dark .shp-pagination-wrapper) {
+            border-color: rgb(255 255 255 / .1)
+        }
+
+        :is(.dark .shp-pagination-wrapper p) {
+            color: #9ca3af
+        }
+
+        :is(.dark .shp-pagination-wrapper a),
+        :is(.dark .shp-pagination-wrapper span.relative) {
+            background-color: rgb(255 255 255 / .05);
+            border-color: rgb(255 255 255 / .1);
+            color: #9ca3af
+        }
+
+        :is(.dark .shp-pagination-wrapper a:hover) {
+            background-color: rgb(255 255 255 / .1);
+            color: #fff
+        }
+
+        :is(.dark .shp-pagination-wrapper span[aria-current="page"]>span) {
+            background-color: rgb(255 255 255 / .15);
+            color: #fff
+        }
     </style>
 
     <div class="shp-wrapper">
@@ -246,7 +350,7 @@
                     @endforeach
                 </div>
 
-                <div style="margin-top: 1.5rem;">
+                <div class="shp-pagination-wrapper">
                     {{ $this->getPaginatedItems->links() }}
                 </div>
             @endif
