@@ -33,7 +33,17 @@ class DeleteShopeeItemJob implements ShouldQueue
 
             if ($product) {
                 $product->forceFill([
+                    'shopee_last_shop_id' => $product->shopee_shop_id,
+                    'shopee_last_item_id' => $product->shopee_item_id,
+                    'shopee_last_model_id' => $product->shopee_model_id,
+                    'shopee_last_sku' => $product->shopee_sku,
+
+                    'shopee_item_id' => null,
+                    'shopee_model_id' => 0,
+                    'shopee_sku' => null,
                     'sync_shopee_stock' => false,
+                    'shopee_stock' => null,
+
                     'shopee_publish_status' => 'deleted',
                     'shopee_item_status' => 'deleted',
                     'shopee_deleted_at' => now(),

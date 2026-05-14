@@ -23,6 +23,10 @@ class Sale extends Model
         'external_status',
         'external_payload',
         'external_synced_at',
+        'product_name_snapshot',
+        'product_sku_snapshot',
+        'product_shopee_item_id_snapshot',
+        'product_shopee_model_id_snapshot',
     ];
 
     protected $casts = [
@@ -34,10 +38,19 @@ class Sale extends Model
         'total_profit' => 'decimal:2',
         'external_payload' => 'array',
         'external_synced_at' => 'datetime',
+        'product_shopee_item_id_snapshot' => 'integer',
+        'product_shopee_model_id_snapshot' => 'integer',
     ];
 
-    public function product(): BelongsTo
+    public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+    public function getDisplayProductNameAttribute(): string
+    {
+        return $this->product_name_snapshot
+            ?: $this->product?->name
+            ?: 'Produk sudah dihapus';
     }
 }

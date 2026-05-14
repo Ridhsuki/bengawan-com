@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\ShopeeShop;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
-use Storage;
+use App\Models\ShopeeShop;
 
 /**
  * @property int $id
@@ -62,7 +63,7 @@ use Storage;
  */
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'category_id',
         'name',
@@ -102,6 +103,10 @@ class Product extends Model
         'shopee_deleted_at',
         'shopee_last_checked_at',
         'shopee_unlinked_reason',
+        'shopee_last_item_id',
+        'shopee_last_model_id',
+        'shopee_last_sku',
+        'shopee_last_shop_id',
     ];
 
     protected $casts = [
@@ -123,6 +128,9 @@ class Product extends Model
         'shopee_published_at' => 'datetime',
         'shopee_deleted_at' => 'datetime',
         'shopee_last_checked_at' => 'datetime',
+        'shopee_last_item_id' => 'integer',
+        'shopee_last_model_id' => 'integer',
+        'shopee_last_shop_id' => 'integer',
     ];
     public function getRouteKeyName(): string
     {
@@ -195,12 +203,22 @@ class Product extends Model
         return $this->sync_shopee_stock
             && filled($this->shopee_shop_id)
             && filled($this->shopee_item_id)
-            && !in_array($this->shopee_item_status, ['deleted', 'not_found'], true);
+            && !in_array($this->shopee_item_status, ['deleted', 'not_found'], true)
+            && !in_array($this->shopee_publish_status, ['deleted', 'not_found'], true);
     }
 
     public function isPublishedToShopee(): bool
     {
-        return filled($this->shopee_item_id);
+        return filled($this->shopee_item_id)
+            && !in_array($this->shopee_item_status, ['deleted', 'not_found'], true)
+            && !in_array($this->shopee_publish_status, ['deleted', 'not_found'], true);
+    }
+
+    public function hasActiveShopeeMapping(): bool
+    {
+        return filled($this->shopee_shop_id)
+            && filled($this->shopee_item_id)
+            && !in_array($this->shopee_item_status, ['deleted', 'not_found'], true);
     }
 
     public function canPublishToShopee(): bool
@@ -220,21 +238,36 @@ class Product extends Model
 
     protected static function booted(): void
     {
-        static::updating(function ($product) {
-            if ($product->isDirty('image')) {
-                $oldImage = $product->getOriginal('image');
+        static::updating(function (Product $product) {
+            if (!$product->isDirty('image')) {
+                return;
+            }
 
-                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
-                    Storage::disk('public')->delete($oldImage);
-                }
+            $oldImage = $product->getOriginal('image');
+            $newImage = $product->image;
+
+            if (
+                filled($oldImage)
+                && $oldImage !== $newImage
+                && Storage::disk('public')->exists($oldImage)
+            ) {
+                Storage::disk('public')->delete($oldImage);
             }
         });
 
-        static::deleting(function ($product) {
+        static::deleting(function (Product $product) {
+            if (!$product->isForceDeleting()) {
+                return;
+            }
+
             $product->images()->get()->each(function ($galleryItem) {
                 $galleryItem->delete();
             });
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
+
+            if (
+                filled($product->image)
+                && Storage::disk('public')->exists($product->image)
+            ) {
                 Storage::disk('public')->delete($product->image);
             }
         });

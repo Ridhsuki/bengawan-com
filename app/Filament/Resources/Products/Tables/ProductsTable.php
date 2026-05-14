@@ -8,10 +8,15 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use App\Jobs\DeleteShopeeItemJob;
 use App\Jobs\PublishProductToShopeeJob;
@@ -42,16 +47,21 @@ class ProductsTable
                         }
                         return asset('assets/img/no-image.webp');
                     })
-                    ->extraImgAttributes(['title' => 'Articles Image', 'loading' => 'lazy', 'style' => 'border-radius: 0.375rem; object-fit: cover;']),
+                    ->extraImgAttributes(['title' => 'Product Image', 'loading' => 'lazy', 'style' => 'border-radius: 0.375rem; object-fit: cover;']),
                 TextColumn::make('name')
                     ->label('Nama Produk')
                     ->searchable()
                     ->sortable()->limit(40)
                     ->extraAttributes(['class' => 'font-semibold'])
-                    ->description(
-                        fn($record) =>
-                        $record->serial_number ?: '-'
-                    ),
+                    ->description(function (Product $record) {
+                        $serial = $record->serial_number ?: '-';
+
+                        if ($record->trashed()) {
+                            return $serial . ' | Diarsipkan';
+                        }
+
+                        return $serial;
+                    }),
                 TextColumn::make('slug')
                     ->searchable()
                     ->badge()
@@ -197,8 +207,16 @@ class ProductsTable
                 SelectFilter::make('category.name')
                     ->relationship('category', 'name')
                     ->label('Category')
-                    ->placeholder('Select Category')
+                    ->placeholder('Select Category'),
+                TrashedFilter::make(),
             ])
+            ->recordUrl(function (Product $record): ?string {
+                if ($record->trashed()) {
+                    return null;
+                }
+
+                return null;
+            })
             ->recordActions([
                 self::recordSaleAction(),
 
@@ -214,10 +232,38 @@ class ProductsTable
                     ->button(),
 
                 ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()->visible(fn(Product $record): bool => !$record->trashed()),
+                    EditAction::make()->visible(fn(Product $record): bool => !$record->trashed()),
+
+                    RestoreAction::make()
+                        ->label('Pulihkan Produk')
+                        ->icon('heroicon-o-arrow-uturn-left')
+                        ->color('success')
+                        ->visible(fn(Product $record): bool => $record->trashed())
+                        ->after(function (Product $record) {
+                            $record->forceFill([
+                                'is_active' => false,
+                            ])->saveQuietly();
+                        })
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil dipulihkan.')
+                                ->body('Produk dikembalikan sebagai draft. Periksa stok, harga, dan data Shopee sebelum dipublikasikan kembali.')
+                        ),
 
                     DeleteAction::make()
+                        ->label('Arsipkan')
+                        ->icon('heroicon-o-archive-box')
+                        ->modalHeading('Arsipkan produk?')
+                        ->modalDescription('Produk akan disembunyikan dari daftar aktif, tetapi histori penjualan tetap tersimpan.')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil diarsipkan.')
+                                ->body('Produk tidak tampil di katalog aktif, tetapi laporan penjualan tetap tersimpan.')
+                        )
+                        ->visible(fn(Product $record): bool => !$record->trashed())
                         ->before(function (Product $record) {
                             if (filled($record->shopee_item_id) && !in_array($record->shopee_item_status, ['deleted', 'not_found'], true)) {
                                 throw ValidationException::withMessages([
@@ -225,6 +271,20 @@ class ProductsTable
                                 ]);
                             }
                         }),
+
+                    ForceDeleteAction::make()
+                        ->label('Hapus Permanen')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->visible(fn(Product $record): bool => $record->trashed())
+                        ->requiresConfirmation()
+                        ->modalHeading('Hapus permanen produk?')
+                        ->modalDescription('Menghapus produk ini akan menghapus seluruh data produk beserta riwayat penjualan terkait secara permanen. Tindakan ini tidak dapat dibatalkan.')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil dihapus permanen.')
+                        ),
                 ])
                     ->label('Kelola')
                     ->icon('heroicon-o-ellipsis-horizontal')
@@ -234,7 +294,24 @@ class ProductsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->label('Arsipkan Produk')
+                        ->modalHeading('Arsipkan produk yang dipilih?')
+                        ->modalDescription('Produk akan disembunyikan dari daftar aktif, tetapi histori penjualan tetap tersimpan.')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil diarsipkan.')
+                                ->body('Produk yang dipilih sudah dipindahkan ke arsip.')
+                        )
                         ->before(function ($records) {
+                            $hasTrashedProduct = $records->contains(fn($record) => $record->trashed());
+
+                            if ($hasTrashedProduct) {
+                                throw ValidationException::withMessages([
+                                    'products' => 'Beberapa produk yang dipilih sudah berada di arsip.',
+                                ]);
+                            }
+
                             $hasConnectedShopeeProduct = $records->contains(function ($record) {
                                 return filled($record->shopee_item_id)
                                     && !in_array($record->shopee_item_status, ['deleted', 'not_found'], true);
@@ -243,6 +320,35 @@ class ProductsTable
                             if ($hasConnectedShopeeProduct) {
                                 throw ValidationException::withMessages([
                                     'products' => 'Beberapa produk masih terhubung ke Shopee. Hapus dari Shopee terlebih dahulu atau gunakan aksi Hapus Shopee + Internal.',
+                                ]);
+                            }
+                        }),
+
+                    RestoreBulkAction::make()
+                        ->label('Pulihkan Produk')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil dipulihkan.')
+                                ->body('Produk yang dipilih dikembalikan ke daftar produk.')
+                        ),
+
+                    ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hapus permanen produk yang dipilih?')
+                        ->modalDescription('Produk akan dihapus permanen dan semua data yang terkait dengan produk akan ikut terhapus.')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Produk berhasil dihapus permanen.')
+                        )
+                        ->before(function ($records) {
+                            $hasActiveProduct = $records->contains(fn($record) => !$record->trashed());
+
+                            if ($hasActiveProduct) {
+                                throw ValidationException::withMessages([
+                                    'products' => 'Hapus permanen hanya boleh dilakukan pada produk yang sudah diarsipkan.',
                                 ]);
                             }
                         }),
@@ -258,6 +364,7 @@ class ProductsTable
             ->icon('heroicon-o-shopping-cart')
             ->color('success')
             ->button()
+            ->visible(fn(Product $record): bool => !$record->trashed())
             ->form([
                 TextInput::make('quantity')
                     ->label('Jumlah Terjual')
@@ -287,6 +394,16 @@ class ProductsTable
                     ->required(),
             ])
             ->action(function (Product $record, array $data) {
+                if ($record->trashed()) {
+                    Notification::make()
+                        ->title('Produk sudah diarsipkan.')
+                        ->body('Produk yang sudah diarsipkan tidak dapat dicatat sebagai penjualan baru. Pulihkan produk terlebih dahulu jika ingin menjualnya kembali.')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
                 if ($record->stock < $data['quantity']) {
                     Notification::make()
                         ->title('Stok tidak cukup.')
@@ -304,6 +421,12 @@ class ProductsTable
                 Sale::create([
                     'sales_channel' => 'internal',
                     'product_id' => $record->id,
+
+                    'product_name_snapshot' => $record->name,
+                    'product_sku_snapshot' => $record->serial_number ?: $record->shopee_sku,
+                    'product_shopee_item_id_snapshot' => $record->shopee_item_id,
+                    'product_shopee_model_id_snapshot' => $record->shopee_model_id,
+
                     'quantity' => $quantity,
                     'cost_price' => $cost,
                     'selling_price' => $sellingPrice,
@@ -335,7 +458,7 @@ class ProductsTable
             ->icon('heroicon-o-cloud-arrow-up')
             ->color('info')
             ->requiresConfirmation()
-            ->visible(fn(Product $record) => !$record->isPublishedToShopee())
+            ->visible(fn(Product $record): bool => !$record->trashed() && !$record->isPublishedToShopee())
             ->action(function (Product $record) {
                 if (!$record->canPublishToShopee()) {
                     Notification::make()
@@ -363,7 +486,7 @@ class ProductsTable
             ->icon('heroicon-o-arrow-path')
             ->color('warning')
             ->requiresConfirmation()
-            ->visible(fn(Product $record) => filled($record->shopee_item_id))
+            ->visible(fn(Product $record): bool => !$record->trashed() && filled($record->shopee_item_id))
             ->action(function (Product $record) {
                 if (!$record->canSyncShopeeStock()) {
                     Notification::make()
@@ -391,7 +514,7 @@ class ProductsTable
             ->icon('heroicon-o-trash')
             ->color('danger')
             ->requiresConfirmation()
-            ->visible(fn(Product $record) => filled($record->shopee_item_id) && filled($record->shopee_shop_id))
+            ->visible(fn(Product $record): bool => !$record->trashed() && filled($record->shopee_item_id) && filled($record->shopee_shop_id))
             ->modalHeading('Hapus produk dari Shopee?')
             ->modalDescription('Produk akan dihapus dari Shopee. Setelah item Shopee dihapus, stok tidak dapat disinkronkan lagi ke item tersebut.')
             ->action(function (Product $record) {
@@ -423,7 +546,7 @@ class ProductsTable
             ->icon('heroicon-o-trash')
             ->color('danger')
             ->requiresConfirmation()
-            ->visible(fn(Product $record) => filled($record->shopee_item_id) && filled($record->shopee_shop_id))
+            ->visible(fn(Product $record): bool => !$record->trashed() && filled($record->shopee_item_id) && filled($record->shopee_shop_id))
             ->modalHeading('Hapus produk dari Shopee dan Bengawan?')
             ->modalDescription('Aksi ini akan menghapus item Shopee terlebih dahulu. Jika berhasil, produk internal juga akan dihapus.')
             ->action(function (Product $record) {

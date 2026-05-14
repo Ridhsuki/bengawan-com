@@ -107,6 +107,18 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                         'product_id' => $product?->id,
                     ],
                     [
+                        'product_name_snapshot' => $product?->name
+                            ?: data_get($item, 'item_name')
+                            ?: data_get($item, 'model_name')
+                            ?: 'Shopee Item ' . $itemId,
+
+                        'product_sku_snapshot' => $product?->serial_number
+                            ?: $product?->shopee_sku
+                            ?: $sku,
+
+                        'product_shopee_item_id_snapshot' => $itemId,
+                        'product_shopee_model_id_snapshot' => $modelId,
+
                         'quantity' => $quantity,
                         'cost_price' => $product?->cost_price ?? 0,
                         'selling_price' => $unitPrice ?? 0,

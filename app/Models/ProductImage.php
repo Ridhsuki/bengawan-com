@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImage extends Model
 {
@@ -25,6 +25,7 @@ class ProductImage extends Model
         static::updating(function ($productImage) {
             if ($productImage->isDirty('image')) {
                 $oldImage = $productImage->getOriginal('image');
+
                 if ($oldImage && Storage::disk('public')->exists($oldImage)) {
                     Storage::disk('public')->delete($oldImage);
                 }
