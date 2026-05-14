@@ -28,7 +28,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/instal.png') }}" alt="Instalasi"
+                    <img src="{{ asset('assets/img/service-page/instal.png') }}" loading="lazy" alt="Instalasi"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Instalasi</h3>
@@ -39,7 +39,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/upgrade.png') }}" alt="Upgrade"
+                    <img src="{{ asset('assets/img/service-page/upgrade.png') }}" loading="lazy" alt="Upgrade"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Upgrade/Downgrade</h3>
@@ -51,7 +51,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/maintenance.png') }}" alt="Maintenance"
+                    <img src="{{ asset('assets/img/service-page/maintenance.png') }}" loading="lazy" alt="Maintenance"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Maintenance</h3>
@@ -62,7 +62,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/sparepart.png') }}" alt="Sparepart"
+                    <img src="{{ asset('assets/img/service-page/sparepart.png') }}" loading="lazy" alt="Sparepart"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Sparepart</h3>
@@ -74,7 +74,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/software.png') }}" alt="Software"
+                    <img src="{{ asset('assets/img/service-page/software.png') }}" loading="lazy" alt="Software"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Software</h3>
@@ -86,7 +86,7 @@
             <div
                 class="bg-white rounded-xl shadow-md border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-blue-50 p-4 rounded-full mb-4">
-                    <img src="{{ asset('assets/img/service-page/garansi.png') }}" alt="Garansi"
+                    <img src="{{ asset('assets/img/service-page/garansi.png') }}" loading="lazy" alt="Garansi"
                         class="w-12 h-12 object-contain">
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-3">Garansi</h3>

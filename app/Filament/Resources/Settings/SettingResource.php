@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Settings;
 
-use App\Filament\Resources\Settings\Pages\CreateSetting;
-use App\Filament\Resources\Settings\Pages\EditSetting;
 use App\Filament\Resources\Settings\Pages\ListSettings;
 use App\Filament\Resources\Settings\Pages\ViewSetting;
 use App\Filament\Resources\Settings\Schemas\SettingForm;

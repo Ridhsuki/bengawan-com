@@ -11,7 +11,8 @@
 
     $publishStatus = $record->shopee_publish_status ?: 'belum publish';
     $syncStatus = $record->shopee_sync_status ?: 'belum sync';
-    $itemStatus = $record->shopee_item_status ?: null;
+    $itemStatus = $record->shopee_item_status
+    ?: ($isPublished ? 'normal' : null);
 
     $lastSyncedAt = $record->shopee_last_synced_at ? $record->shopee_last_synced_at->format('d M H:i') : '-';
 
@@ -24,10 +25,18 @@
         };
     };
 
-    $dotClass = match ($record->shopee_item_status) {
-        'normal' => 'sov-dot-success',
-        'deleted', 'not_found' => 'sov-dot-danger',
-        default => $isPublished ? 'sov-dot-warning' : 'sov-dot-muted',
+   $dotClass = match (true) {
+        $record->shopee_item_status === 'deleted',
+        $record->shopee_item_status === 'not_found' => 'sov-dot-danger',
+
+        $record->shopee_item_status === 'normal',
+        $record->shopee_publish_status === 'success',
+        filled($record->shopee_item_id) => 'sov-dot-success',
+
+        $record->shopee_publish_status === 'pending',
+        $record->shopee_sync_status === 'pending' => 'sov-dot-warning',
+
+        default => 'sov-dot-muted',
     };
 
     $title = $isPublished ? 'Terhubung Shopee' : 'Belum Publish';

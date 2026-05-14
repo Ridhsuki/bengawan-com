@@ -17,53 +17,52 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif
 }
 
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 
 .no-scrollbar {
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: none
 }
 
 ::selection {
     background-color: #f3d0f2;
     color: #333;
     border-radius: 4px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s ease-in-out;
+    box-shadow: 0 0 6px rgb(0 0 0 / .2);
+    transition: background-color 0.2s ease-in-out
 }
 
-
 [x-cloak] {
-    display: none !important;
+    display: none !important
 }
 
 @layer components {
     .skeleton {
         background: linear-gradient(90deg, #e5e7eb 25%, #d1d5db 50%, #e5e7eb 75%);
         background-size: 200% 100%;
-        animation: skeleton-loading 1.5s infinite;
+        animation: skeleton-loading 1.5s infinite
     }
 }
 
 @keyframes skeleton-loading {
     0% {
-        background-position: 200% 0;
+        background-position: 200% 0
     }
 
     100% {
-        background-position: -200% 0;
+        background-position: -200% 0
     }
 }
 
 .img-loading {
-    opacity: 0;
+    opacity: 0
 }
 
 .img-loaded {
-    opacity: 1;
+    opacity: 1
 }

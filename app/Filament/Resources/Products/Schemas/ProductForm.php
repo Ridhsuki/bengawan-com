@@ -154,7 +154,6 @@ class ProductForm
                                         if (blank($value)) {
                                             return;
                                         }
-
                                         $exists = Product::query()
                                             ->where('shopee_shop_id', $get('shopee_shop_id'))
                                             ->where('shopee_item_id', $value)
@@ -172,6 +171,7 @@ class ProductForm
                         Select::make('shopee_model_id')
                             ->label('Shopee Model')
                             ->searchable()
+                            ->required()
                             ->options(function (Get $get): array {
                                 return app(ShopeeCatalogService::class)->modelOptions(
                                     $get('shopee_item_id') ? (int) $get('shopee_item_id') : null
@@ -299,6 +299,7 @@ class ProductForm
 
                         Select::make('shopee_logistic_id')
                             ->label('Shopee Logistic')
+                            ->columnSpan(2)
                             ->searchable()
                             ->preload()
                             ->options(fn(): array => app(ShopeeCatalogService::class)->logisticOptions())
@@ -313,7 +314,8 @@ class ProductForm
                         TextInput::make('shopee_publish_status')
                             ->label('Status Publish Shopee')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(false)
+                            ->helperText('Status publish produk ke Shopee.'),
 
                         TextInput::make('shopee_item_status')
                             ->label('Status Item Shopee')
@@ -330,6 +332,7 @@ class ProductForm
 
                         Toggle::make('sync_shopee_stock')
                             ->label('Aktifkan Sinkronisasi Stok Shopee')
+                            ->columnSpan(2)
                             ->default(false)
                             ->helperText('Jika aktif, perubahan stok di website akan dikirim ke Shopee.'),
 
