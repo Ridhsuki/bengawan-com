@@ -37,7 +37,7 @@ class ShopeeIntegration extends Page
     {
         $shop = ShopeeShop::where('is_active', true)->latest('id')->first();
 
-        if (! $shop) {
+        if (!$shop) {
             return 'Action needed';
         }
 
@@ -52,7 +52,7 @@ class ShopeeIntegration extends Page
     {
         $shop = ShopeeShop::where('is_active', true)->latest('id')->first();
 
-        if (! $shop) {
+        if (!$shop) {
             return 'danger';
         }
 
@@ -105,20 +105,22 @@ class ShopeeIntegration extends Page
     {
         return [
             Action::make('connect')
-                ->label(fn () => $this->status['connected'] ?? false ? 'Re-authorize Shopee' : 'Hubungkan Shopee')
+                ->label(fn() => ($this->status['connected'] ?? false) ? 'Re-authorize Shopee' : 'Hubungkan Shopee')
                 ->icon('heroicon-o-link')
                 ->color('success')
-                ->url(fn () => route('shopee.connect')),
+                ->action(function () {
+                    return redirect()->to(route('shopee.connect'));
+                }),
 
             Action::make('test_connection')
                 ->label('Test Koneksi')
                 ->icon('heroicon-o-signal')
                 ->color('info')
-                ->visible(fn () => (bool) ($this->status['connected'] ?? false))
+                ->visible(fn() => (bool) ($this->status['connected'] ?? false))
                 ->action(function (ShopeeClient $client) {
                     $shop = ShopeeShop::where('is_active', true)->latest('id')->first();
 
-                    if (! $shop) {
+                    if (!$shop) {
                         Notification::make()
                             ->title('Shopee belum terhubung.')
                             ->danger()
@@ -155,12 +157,12 @@ class ShopeeIntegration extends Page
                 ->label('Refresh Token')
                 ->icon('heroicon-o-arrow-path')
                 ->color('warning')
-                ->visible(fn () => (bool) ($this->status['connected'] ?? false))
+                ->visible(fn() => (bool) ($this->status['connected'] ?? false))
                 ->requiresConfirmation()
                 ->action(function (ShopeeClient $client) {
                     $shop = ShopeeShop::where('is_active', true)->latest('id')->first();
 
-                    if (! $shop) {
+                    if (!$shop) {
                         Notification::make()
                             ->title('Shopee belum terhubung.')
                             ->danger()
@@ -191,7 +193,7 @@ class ShopeeIntegration extends Page
                 ->label('Nonaktifkan Koneksi Lokal')
                 ->icon('heroicon-o-no-symbol')
                 ->color('danger')
-                ->visible(fn () => (bool) ($this->status['connected'] ?? false))
+                ->visible(fn() => (bool) ($this->status['connected'] ?? false))
                 ->requiresConfirmation()
                 ->modalHeading('Nonaktifkan koneksi Shopee lokal?')
                 ->modalDescription('Aksi ini hanya menonaktifkan koneksi di Bengawan. Ini tidak menghapus app atau toko dari Shopee Open Platform.')
