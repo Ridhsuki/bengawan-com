@@ -25,7 +25,7 @@ class ShopeeItems extends Page
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Produk';
+    protected static string|\UnitEnum|null $navigationGroup = 'Marketplace';
 
     protected string $view = 'filament.pages.shopee-items';
 

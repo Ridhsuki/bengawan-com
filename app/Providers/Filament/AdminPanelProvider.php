@@ -11,6 +11,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Actions\Action;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -37,8 +38,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Landing Page')
-                    ->icon('heroicon-o-device-phone-mobile')
+                    ->icon('heroicon-o-globe-alt')
                     ->url('/')
+            ])
+            ->userMenuItems([
+                'logout' => fn(Action $action) => $action->label('Log out')->icon('heroicon-o-arrow-left-on-rectangle')->color('danger'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
