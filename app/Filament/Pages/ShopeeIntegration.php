@@ -20,13 +20,16 @@ class ShopeeIntegration extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Marketplace';
 
-    // protected static ?int $navigationSort = 2;
-
     protected string $view = 'filament.pages.shopee-integration';
 
     public array $status = [];
 
     public ?string $lastTestMessage = null;
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
+    }
 
     public function mount(): void
     {

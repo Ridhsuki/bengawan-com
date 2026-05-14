@@ -38,6 +38,11 @@ class ShopeeItems extends Page
 
     public ?int $selectedShopId = null;
 
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
+    }
+
     public function mount(): void
     {
         $this->selectedShopId = ShopeeShop::where('is_active', true)->value('id');
