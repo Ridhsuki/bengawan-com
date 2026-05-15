@@ -93,10 +93,21 @@ class ShopeeClient
                 'buyer_user_id',
                 'buyer_username',
                 'recipient_address',
-                'item_list',
+                'actual_shipping_fee',
+                'goods_to_declare',
                 'total_amount',
-                'order_status',
+                'item_list',
                 'pay_time',
+                'dropshipper',
+                'dropshipper_phone',
+                'split_up',
+                'buyer_cancel_reason',
+                'cancel_by',
+                'cancel_reason',
+                'order_status',
+                'shipping_carrier',
+                'payment_method',
+                'create_time',
                 'update_time',
             ]),
         ]);
@@ -106,15 +117,27 @@ class ShopeeClient
         ShopeeShop $shop,
         int $timeFrom,
         int $timeTo,
-        ?string $cursor = null
+        ?string $cursor = null,
+        int $pageSize = 50,
+        string $timeRangeField = 'update_time',
+        ?string $orderStatus = null
     ): array {
-        return $this->shopGet('/api/v2/order/get_order_list', $shop, array_filter([
-            'time_range_field' => 'update_time',
+        $params = [
+            'time_range_field' => $timeRangeField,
             'time_from' => $timeFrom,
             'time_to' => $timeTo,
-            'page_size' => 50,
-            'cursor' => $cursor,
-        ], fn($value) => filled($value)));
+            'page_size' => $pageSize,
+        ];
+
+        if (filled($cursor)) {
+            $params['cursor'] = $cursor;
+        }
+
+        if (filled($orderStatus)) {
+            $params['order_status'] = $orderStatus;
+        }
+
+        return $this->shopGet('/api/v2/order/get_order_list', $shop, $params);
     }
 
     public function getItemBaseInfo(ShopeeShop $shop, array $itemIds): array

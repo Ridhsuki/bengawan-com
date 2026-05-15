@@ -77,7 +77,8 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                     ?? data_get($item, 'original_price')
                     ?? 0;
 
-                $product = Product::where('shopee_shop_id', $shop->id)
+                $product = Product::withTrashed()
+                    ->where('shopee_shop_id', $shop->id)
                     ->where('shopee_item_id', $itemId)
                     ->where('shopee_model_id', $modelId)
                     ->lockForUpdate()
@@ -134,7 +135,12 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                     ]
                 );
 
-                if ($product && $this->shouldReduceStock($status) && blank($order->stock_applied_at)) {
+                if (
+                    $product
+                    && !$product->trashed()
+                    && $this->shouldReduceStock($status)
+                    && blank($order->stock_applied_at)
+                ) {
                     $newStock = max(0, ((int) $product->stock) - $quantity);
 
                     $product->forceFill([
@@ -146,7 +152,13 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                     ])->save();
                 }
 
-                if ($product && $this->shouldRestoreStock($status) && filled($order->stock_applied_at) && blank($order->stock_restored_at)) {
+                if (
+                    $product
+                    && !$product->trashed()
+                    && $this->shouldRestoreStock($status)
+                    && filled($order->stock_applied_at)
+                    && blank($order->stock_restored_at)
+                ) {
                     $newStock = ((int) $product->stock) + $quantity;
 
                     $product->forceFill([

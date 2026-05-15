@@ -12,7 +12,7 @@ Schedule::command('shopee:refresh-tokens')
     ->everyThreeHours()
     ->withoutOverlapping();
 
-Schedule::command('shopee:pull-orders --hours=24')
+Schedule::command('shopee:pull-orders --hours=3')
     ->everyTenMinutes()
     ->withoutOverlapping();
 
