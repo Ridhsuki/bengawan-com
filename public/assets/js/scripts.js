@@ -16,7 +16,6 @@ if (mobileMenuBtn && mobileMenu) {
     });
 }
 
-
 function searchComponent() {
     return {
         query: '',

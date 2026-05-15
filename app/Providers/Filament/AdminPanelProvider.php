@@ -73,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->defaultThemeMode(ThemeMode::Dark)
-            ->spa();
+            ->defaultThemeMode(ThemeMode::Dark);
+        // ->spa();
     }
 }
