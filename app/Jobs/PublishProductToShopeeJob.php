@@ -44,6 +44,8 @@ class PublishProductToShopeeJob implements ShouldQueue
         $product->forceFill([
             'shopee_publish_status' => 'pending',
             'shopee_publish_error' => null,
+            'shopee_sync_error' => null,
+            'shopee_unlinked_reason' => null,
         ])->saveQuietly();
 
         try {
@@ -127,6 +129,9 @@ class PublishProductToShopeeJob implements ShouldQueue
                 'shopee_publish_status' => 'success',
                 'shopee_publish_error' => null,
                 'shopee_published_at' => now(),
+                'shopee_item_status' => 'normal',
+                'shopee_deleted_at' => null,
+                'shopee_unlinked_reason' => null,
                 'shopee_sync_status' => 'success',
                 'shopee_sync_error' => null,
             ])->saveQuietly();

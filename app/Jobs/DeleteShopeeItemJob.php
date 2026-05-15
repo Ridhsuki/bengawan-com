@@ -44,12 +44,12 @@ class DeleteShopeeItemJob implements ShouldQueue
                     'sync_shopee_stock' => false,
                     'shopee_stock' => null,
 
-                    'shopee_publish_status' => 'deleted',
-                    'shopee_item_status' => 'deleted',
+                    'shopee_publish_status' => null,
+                    'shopee_item_status' => null,
                     'shopee_deleted_at' => now(),
-                    'shopee_sync_status' => 'deleted',
+                    'shopee_sync_status' => null,
                     'shopee_sync_error' => null,
-                    'shopee_unlinked_reason' => 'Produk dihapus dari Shopee melalui Bengawan.',
+                    'shopee_unlinked_reason' => null,
                 ])->saveQuietly();
             }
 

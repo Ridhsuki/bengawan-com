@@ -7,12 +7,43 @@
 @php
     $record = $getRecord();
 
-    $isPublished = filled($record->shopee_item_id);
+    $hasActiveShopeeItem = filled($record->shopee_item_id);
 
-    $publishStatus = $record->shopee_publish_status ?: 'belum publish';
+    $hasShopeeProblem = $hasActiveShopeeItem && in_array($record->shopee_item_status, ['deleted', 'not_found'], true);
+
+    $isPending =
+        in_array($record->shopee_publish_status, ['pending'], true) ||
+        in_array($record->shopee_sync_status, ['pending'], true);
+
+    $isConnected = $hasActiveShopeeItem && !$hasShopeeProblem;
+
+    $title = match (true) {
+        $hasShopeeProblem => 'Shopee Bermasalah',
+        $isConnected => 'Terhubung Shopee',
+        $isPending => 'Sedang Diproses',
+        default => 'Belum Publish',
+    };
+
+    $dotClass = match (true) {
+        $hasShopeeProblem => 'sov-dot-danger',
+        $isConnected => 'sov-dot-success',
+        $isPending => 'sov-dot-warning',
+        default => 'sov-dot-muted',
+    };
+
+    $itemStatus = match (true) {
+        $hasShopeeProblem => $record->shopee_item_status,
+        $isConnected => $record->shopee_item_status ?: 'normal',
+        default => null,
+    };
+
+    $publishStatus = match (true) {
+        $hasActiveShopeeItem => $record->shopee_publish_status ?: 'success',
+        $isPending => 'pending',
+        default => 'belum publish',
+    };
+
     $syncStatus = $record->shopee_sync_status ?: 'belum sync';
-    $itemStatus = $record->shopee_item_status
-    ?: ($isPublished ? 'normal' : null);
 
     $lastSyncedAt = $record->shopee_last_synced_at ? $record->shopee_last_synced_at->format('d M H:i') : '-';
 
@@ -25,21 +56,6 @@
         };
     };
 
-   $dotClass = match (true) {
-        $record->shopee_item_status === 'deleted',
-        $record->shopee_item_status === 'not_found' => 'sov-dot-danger',
-
-        $record->shopee_item_status === 'normal',
-        $record->shopee_publish_status === 'success',
-        filled($record->shopee_item_id) => 'sov-dot-success',
-
-        $record->shopee_publish_status === 'pending',
-        $record->shopee_sync_status === 'pending' => 'sov-dot-warning',
-
-        default => 'sov-dot-muted',
-    };
-
-    $title = $isPublished ? 'Terhubung Shopee' : 'Belum Publish';
     $itemId = $record->shopee_item_id ?: '-';
 @endphp
 
@@ -80,7 +96,7 @@
         <strong>{{ $lastSyncedAt }}</strong>
     </div>
 
-    @if ($record->shopee_unlinked_reason)
+    @if ($hasShopeeProblem && $record->shopee_unlinked_reason)
         <div class="sov-reason">
             {{ $record->shopee_unlinked_reason }}
         </div>

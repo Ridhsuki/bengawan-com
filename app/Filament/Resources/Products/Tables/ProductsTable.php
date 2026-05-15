@@ -245,6 +245,17 @@ class ProductsTable
                             $record->forceFill([
                                 'is_active' => false,
                             ])->saveQuietly();
+
+                            if (blank($record->shopee_item_id)) {
+                                $record->forceFill([
+                                    'shopee_publish_status' => null,
+                                    'shopee_item_status' => null,
+                                    'shopee_deleted_at' => null,
+                                    'shopee_unlinked_reason' => null,
+                                    'shopee_sync_status' => null,
+                                    'shopee_sync_error' => null,
+                                ])->saveQuietly();
+                            }
                         })
                         ->successNotification(
                             Notification::make()
@@ -327,11 +338,29 @@ class ProductsTable
 
                     RestoreBulkAction::make()
                         ->label('Pulihkan Produk')
+                        ->after(function ($records) {
+                            $records->each(function (Product $record) {
+                                $record->forceFill([
+                                    'is_active' => false,
+                                ])->saveQuietly();
+
+                                if (blank($record->shopee_item_id)) {
+                                    $record->forceFill([
+                                        'shopee_publish_status' => null,
+                                        'shopee_item_status' => null,
+                                        'shopee_deleted_at' => null,
+                                        'shopee_unlinked_reason' => null,
+                                        'shopee_sync_status' => null,
+                                        'shopee_sync_error' => null,
+                                    ])->saveQuietly();
+                                }
+                            });
+                        })
                         ->successNotification(
                             Notification::make()
                                 ->success()
                                 ->title('Produk berhasil dipulihkan.')
-                                ->body('Produk yang dipilih dikembalikan ke daftar produk.')
+                                ->body('Produk yang dipilih dikembalikan sebagai draft dan siap dikonfigurasi ulang.')
                         ),
 
                     ForceDeleteBulkAction::make()
