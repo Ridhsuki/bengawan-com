@@ -44,7 +44,6 @@ class ProductInfolist
                                 ? asset("storage/{$record->image}")
                                 : asset('assets/img/no-image.webp'))
                             ->extraImgAttributes(['title' => 'Featured Image', 'loading' => 'lazy', 'style' => 'border-radius: 0.375rem; object-fit: cover; shadow: 0 1px 3px rgba(0,0,0,0.1);']),
-
                     ]),
 
                 Section::make('Price & Stock')
@@ -123,12 +122,12 @@ class ProductInfolist
                                     ->openUrlInNewTab()
                                     ->color('warning')
                                     ->formatStateUsing(fn($state) => $state ? 'Buka di Shopee' : 'Belum ditautkan'),
-                                TextEntry::make('link_tokopedia')
-                                    ->label('Tokopedia')
-                                    ->url(fn($state) => $state)
-                                    ->openUrlInNewTab()
-                                    ->color('success')
-                                    ->formatStateUsing(fn($state) => $state ? 'Buka di Tokopedia' : 'Belum ditautkan'),
+                                // TextEntry::make('link_tokopedia')
+                                //     ->label('Tokopedia')
+                                //     ->url(fn($state) => $state)
+                                //     ->openUrlInNewTab()
+                                //     ->color('success')
+                                //     ->formatStateUsing(fn($state) => $state ? 'Buka di Tokopedia' : 'Belum ditautkan'),
                             ]),
                     ]),
 

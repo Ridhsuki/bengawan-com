@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Services\Shopee\ShopeeCatalogService;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Repeater;
-use App\Services\Shopee\ShopeeCatalogService;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Filament\Support\RawJs;
@@ -49,7 +49,7 @@ class ProductForm
                         ->label('Slug Produk')
                         ->columnSpanFull(),
                     Textarea::make('description')
-                        ->columnSpanFull()->rows(7)
+                        ->columnSpanFull()->rows(7)->required()
                         ->label('Deskripsi Produk'),
                 ])
                     ->columnSpanFull(),
@@ -116,7 +116,8 @@ class ProductForm
                     Toggle::make('is_active')
                         ->default(true)
                         ->label('Aktif')
-                        ->columnSpan(1),
+                        ->columnSpan(1)
+                        ->helperText('Jika aktif, produk akan tampil di halaman depan'),
                 ])->columnSpanFull(),
 
                 Section::make('Marketplace & Sinkronisasi Shopee')
@@ -125,13 +126,21 @@ class ProductForm
                             ->url()
                             ->label('Link Shopee')
                             ->maxLength(2001)
-                            ->prefixIcon('heroicon-o-shopping-bag'),
-
-                        TextInput::make('link_tokopedia')
-                            ->url()
-                            ->label('Link Tokopedia')
-                            ->maxLength(2001)
-                            ->prefixIcon('heroicon-o-shopping-cart'),
+                            ->prefixIcon('heroicon-o-shopping-bag')
+                            ->placeholder('https://shopee.co.id/...')
+                            ->columnSpanFull()
+                            ->disabled(fn(string $operation) => $operation === 'create')
+                            ->helperText(
+                                fn(string $operation): string =>
+                                $operation === 'create'
+                                ? 'Kosongkan saat membuat produk baru. Anda bisa mengisinya nanti setelah produk berhasil di-publish ke Shopee.'
+                                : 'Pastikan link mengarah ke halaman produk Shopee Anda.'
+                            ),
+                        // TextInput::make('link_tokopedia')
+                        //     ->url()
+                        //     ->label('Link Tokopedia')
+                        //     ->maxLength(2001)
+                        //     ->prefixIcon('heroicon-o-shopping-cart'),
 
                         Select::make('shopee_shop_id')
                             ->label('Toko Shopee Terhubung')
@@ -318,45 +327,58 @@ class ProductForm
                             )
                             ->helperText('Pilih channel logistik aktif dari Shopee. Wajib untuk publish produk baru.'),
 
+                        Toggle::make('sync_shopee_stock')
+                            ->label('Aktifkan Sinkronisasi Stok Shopee')
+                            ->columnSpan(2)
+                            ->default(false)
+                            ->helperText('Jika aktif, perubahan stok di website akan dikirim ke Shopee.'),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
+
+                Section::make('Status Sinkronisasi Shopee')
+                    ->description('Informasi di bawah ini diambil otomatis dari server Shopee dan tidak dapat diubah secara manual.')
+                    ->hiddenOn('create')
+                    ->schema([
                         TextInput::make('shopee_publish_status')
                             ->label('Status Publish Shopee')
                             ->disabled()
                             ->dehydrated(false)
-                            ->helperText('Status publish produk ke Shopee.'),
+                            ->helperText('Status proses pembuatan produk ini ke sistem Shopee (misal: SUCCESS, FAILED).'),
 
                         TextInput::make('shopee_item_status')
                             ->label('Status Item Shopee')
                             ->disabled()
                             ->dehydrated(false)
                             ->placeholder('-')
-                            ->helperText('Status item Shopee hasil sinkronisasi atau rekonsiliasi.'),
+                            ->helperText('Kondisi produk saat ini di etalase toko Shopee Anda (misal: NORMAL, BANNED, atau UNLISTED).'),
 
                         Textarea::make('shopee_publish_error')
                             ->label('Error Publish Shopee')
                             ->disabled()
                             ->dehydrated(false)
+                            ->helperText('Pesan kesalahan resmi dari Shopee jika produk gagal ditayangkan.')
+                            ->hidden(fn($state) => blank($state))
                             ->columnSpanFull(),
-
-                        Toggle::make('sync_shopee_stock')
-                            ->label('Aktifkan Sinkronisasi Stok Shopee')
-                            ->columnSpan(2)
-                            ->default(false)
-                            ->helperText('Jika aktif, perubahan stok di website akan dikirim ke Shopee.'),
 
                         TextInput::make('shopee_stock')
                             ->label('Stok Terakhir dari Shopee')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(false)
+                            ->helperText('Jumlah stok fisik yang saat ini tercatat di server Shopee.'),
 
                         TextInput::make('shopee_sync_status')
                             ->label('Status Sync')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(false)
+                            ->helperText('Status pengiriman pembaruan data terakhir (seperti stok/harga) ke Shopee.'),
 
                         Textarea::make('shopee_sync_error')
                             ->label('Error Sync Terakhir')
                             ->disabled()
                             ->dehydrated(false)
+                            ->helperText('Detail masalah jika sistem gagal menyinkronkan pembaruan data ke Shopee.')
+                            ->hidden(fn($state) => blank($state))
                             ->columnSpanFull(),
                     ])
                     ->columns(2)

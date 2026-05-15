@@ -52,7 +52,7 @@ class ProductsTable
                 TextColumn::make('name')
                     ->label('Nama Produk')
                     ->searchable()
-                    ->sortable()->limit(30)->tooltip(fn($record) => $record->name)
+                    ->sortable()->limit(25)->tooltip(fn($record) => $record->name)
                     ->extraAttributes(['class' => 'font-semibold'])
                     ->description(function (Product $record) {
                         $serial = $record->serial_number ?: '-';
@@ -114,7 +114,7 @@ class ProductsTable
                     ->toggleable(),
 
                 TextColumn::make('link_shopee')
-                    ->label('Shopee')
+                    ->label('Link Shopee')
                     ->placeholder('-')
                     ->formatStateUsing(fn($state) => $state ? 'Link' : null)
                     ->url(fn($state) => $state)
@@ -122,14 +122,14 @@ class ProductsTable
                     ->alignCenter()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('link_tokopedia')
-                    ->label('Tokopedia')
-                    ->placeholder('-')
-                    ->formatStateUsing(fn($state) => $state ? 'Link' : null)
-                    ->url(fn($state) => $state)
-                    ->openUrlInNewTab()
-                    ->alignCenter()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('link_tokopedia')
+                //     ->label('Tokopedia')
+                //     ->placeholder('-')
+                //     ->formatStateUsing(fn($state) => $state ? 'Link' : null)
+                //     ->url(fn($state) => $state)
+                //     ->openUrlInNewTab()
+                //     ->alignCenter()
+                //     ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('is_active')
                     ->label('Active')
