@@ -51,7 +51,7 @@ class ShopeePullOrdersCommand extends Command
                     );
                 } catch (Throwable $e) {
                     $this->error("Gagal pull order shop {$shop->shop_id}: {$e->getMessage()}");
-                    break;
+                    return self::FAILURE;
                 }
 
                 $orders = data_get($response, 'response.order_list', []);
@@ -66,9 +66,9 @@ class ShopeePullOrdersCommand extends Command
                     }
 
                     if ($runSync) {
-                        SyncShopeeOrderJob::dispatchSync($shop->id, $orderSn);
+                        SyncShopeeOrderJob::dispatchSync($shop->id, (string) $orderSn);
                     } else {
-                        SyncShopeeOrderJob::dispatch($shop->id, $orderSn);
+                        SyncShopeeOrderJob::dispatch($shop->id, (string) $orderSn);
                     }
 
                     $total++;

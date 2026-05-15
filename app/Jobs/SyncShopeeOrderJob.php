@@ -60,29 +60,34 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                 $itemId = (int) data_get($item, 'item_id');
                 $modelId = (int) (data_get($item, 'model_id') ?? 0);
 
-                $qty = (int) (
+                if ($itemId <= 0) {
+                    continue;
+                }
+
+                $quantity = max(1, (int) (
                     data_get($item, 'model_quantity_purchased')
                     ?? data_get($item, 'item_quantity')
                     ?? data_get($item, 'quantity')
                     ?? 1
-                );
+                ));
 
-                $quantity = max(1, $qty);
+                $sku = data_get($item, 'model_sku')
+                    ?: data_get($item, 'item_sku')
+                    ?: null;
 
-                $sku = data_get($item, 'model_sku') ?: data_get($item, 'item_sku');
-
-                $unitPrice = data_get($item, 'model_discounted_price')
+                $unitPrice = (float) (
+                    data_get($item, 'model_discounted_price')
                     ?? data_get($item, 'model_original_price')
                     ?? data_get($item, 'item_price')
                     ?? data_get($item, 'original_price')
-                    ?? 0;
+                    ?? 0
+                );
 
-                $product = Product::withTrashed()
-                    ->where('shopee_shop_id', $shop->id)
-                    ->where('shopee_item_id', $itemId)
-                    ->where('shopee_model_id', $modelId)
-                    ->lockForUpdate()
-                    ->first();
+                [$product, $isActiveMapping] = $this->resolveProduct(
+                    shopLocalId: $shop->id,
+                    itemId: $itemId,
+                    modelId: $modelId
+                );
 
                 ShopeeOrderItem::updateOrCreate(
                     [
@@ -105,9 +110,10 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                         'external_order_sn' => $this->orderSn,
                         'external_item_id' => $itemId,
                         'external_model_id' => $modelId,
-                        'product_id' => $product?->id,
                     ],
                     [
+                        'product_id' => $product?->id,
+
                         'product_name_snapshot' => $product?->name
                             ?: data_get($item, 'item_name')
                             ?: data_get($item, 'model_name')
@@ -122,13 +128,14 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
 
                         'quantity' => $quantity,
                         'cost_price' => $product?->cost_price ?? 0,
-                        'selling_price' => $unitPrice ?? 0,
-                        'negotiated_price' => $unitPrice ?? 0,
+                        'selling_price' => $unitPrice,
+                        'negotiated_price' => $unitPrice,
                         'total_profit' => $product
-                            ? (($unitPrice ?? 0) - (float) $product->cost_price) * $quantity
+                            ? ($unitPrice - (float) $product->cost_price) * $quantity
                             : 0,
+
                         'customer_info' => 'Shopee Order ' . $this->orderSn,
-                        'transaction_date' => now(),
+                        'transaction_date' => $this->resolveTransactionDate($detail),
                         'external_status' => $status,
                         'external_payload' => $item,
                         'external_synced_at' => now(),
@@ -137,6 +144,7 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
 
                 if (
                     $product
+                    && $isActiveMapping
                     && !$product->trashed()
                     && $this->shouldReduceStock($status)
                     && blank($order->stock_applied_at)
@@ -154,6 +162,7 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
 
                 if (
                     $product
+                    && $isActiveMapping
                     && !$product->trashed()
                     && $this->shouldRestoreStock($status)
                     && filled($order->stock_applied_at)
@@ -179,6 +188,46 @@ class SyncShopeeOrderJob implements ShouldQueue, ShouldBeUnique
                 $order->forceFill(['stock_restored_at' => now()])->save();
             }
         });
+    }
+
+    private function resolveProduct(int $shopLocalId, int $itemId, int $modelId): array
+    {
+        $product = Product::withTrashed()
+            ->where('shopee_shop_id', $shopLocalId)
+            ->where('shopee_item_id', $itemId)
+            ->where('shopee_model_id', $modelId)
+            ->lockForUpdate()
+            ->first();
+
+        if ($product) {
+            return [$product, true];
+        }
+
+        $historicalProduct = Product::withTrashed()
+            ->where(function ($query) use ($shopLocalId) {
+                $query->where('shopee_shop_id', $shopLocalId)
+                    ->orWhere('shopee_last_shop_id', $shopLocalId);
+            })
+            ->where('shopee_last_item_id', $itemId)
+            ->where(function ($query) use ($modelId) {
+                $query->where('shopee_last_model_id', $modelId)
+                    ->orWhereNull('shopee_last_model_id');
+            })
+            ->lockForUpdate()
+            ->first();
+
+        return [$historicalProduct, false];
+    }
+
+    private function resolveTransactionDate(array $detail): \Carbon\Carbon
+    {
+        $timestamp = data_get($detail, 'pay_time')
+            ?: data_get($detail, 'create_time')
+            ?: data_get($detail, 'update_time');
+
+        return $timestamp
+            ? \Carbon\Carbon::createFromTimestamp((int) $timestamp)
+            : now();
     }
 
     private function shouldReduceStock(?string $status): bool

@@ -548,7 +548,7 @@ class ProductsTable
             ->requiresConfirmation()
             ->visible(fn(Product $record): bool => !$record->trashed() && filled($record->shopee_item_id) && filled($record->shopee_shop_id))
             ->modalHeading('Hapus produk dari Shopee?')
-            ->modalDescription('Produk akan dihapus dari Shopee. Setelah item Shopee dihapus, stok tidak dapat disinkronkan lagi ke item tersebut.')
+            ->modalDescription('Produk akan dihapus dari Shopee. Setelah item Shopee dihapus, stok tidak dapat disinkronkan lagi ke item tersebut namun dapat publish ulang.')
             ->action(function (Product $record) {
                 try {
                     DeleteShopeeItemJob::dispatchSync(

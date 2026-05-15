@@ -162,8 +162,13 @@
                                 <td>{{ optional($sale->transaction_date)->format('d M Y') }}</td>
                                 <td>
                                     <div class="ssr-product">
-                                        {{ $sale->product_name_snapshot ?: $sale->product?->name ?? 'Produk sudah dihapus' }}
+                                        {{ $sale->product_name_snapshot ?: $sale->product?->name ?? 'Produk Shopee tidak termapping' }}
                                     </div>
+                                    @if (blank($sale->product_id))
+                                        <div class="ssr-muted" style="color:#92400e;">
+                                            Belum termapping ke produk internal
+                                        </div>
+                                    @endif
                                     <div class="ssr-muted">
                                         SKU: {{ $sale->product_sku_snapshot ?: '-' }}
                                         · Item: {{ $sale->external_item_id ?: '-' }}
