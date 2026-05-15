@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Filament\Support\RawJs;
 use App\Models\Product;
 
 class ProductForm
@@ -87,16 +88,22 @@ class ProductForm
                         ->label('Harga Modal')
                         ->prefix('Rp')
                         ->numeric()
+                        ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                        ->stripCharacters('.')
                         ->required(),
                     TextInput::make('price')
                         ->numeric()
                         ->prefix('Rp')
+                        ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                        ->stripCharacters('.')
                         ->required()
                         ->label('Harga Jual')
                         ->columnSpan(1),
                     TextInput::make('discount_price')
                         ->numeric()
                         ->prefix('Rp')
+                        ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                        ->stripCharacters('.')
                         ->helperText('Isi jika produk sedang diskon. Kosongkan jika harga normal.')
                         ->label('Harga Diskon')
                         ->columnSpan(1),
