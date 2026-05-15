@@ -51,7 +51,7 @@ class ProductsTable
                 TextColumn::make('name')
                     ->label('Nama Produk')
                     ->searchable()
-                    ->sortable()->limit(40)
+                    ->sortable()->limit(30)->tooltip(fn($record) => $record->name)
                     ->extraAttributes(['class' => 'font-semibold'])
                     ->description(function (Product $record) {
                         $serial = $record->serial_number ?: '-';
