@@ -199,7 +199,7 @@ class ShopeeIntegration extends Page
                 ->visible(fn() => (bool) ($this->status['connected'] ?? false))
                 ->requiresConfirmation()
                 ->modalHeading('Nonaktifkan koneksi Shopee lokal?')
-                ->modalDescription('Aksi ini hanya menonaktifkan koneksi di Bengawan. Ini tidak menghapus app atau toko dari Shopee Open Platform.')
+                ->modalDescription('Aksi ini hanya menonaktifkan koneksi di web internal. Ini tidak menghapus app atau toko dari Shopee Open Platform.')
                 ->action(function () {
                     $shop = ShopeeShop::where('is_active', true)->latest('id')->first();
 

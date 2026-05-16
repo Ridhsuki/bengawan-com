@@ -176,7 +176,7 @@ class ShopeeItems extends Page
         ]);
 
         Notification::make()
-            ->title('Produk Bengawan berhasil dihubungkan ke item Shopee.')
+            ->title('Produk Internal berhasil dihubungkan ke item Shopee.')
             ->success()
             ->send();
     }

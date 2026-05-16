@@ -579,7 +579,7 @@ class ProductsTable
             ->color('danger')
             ->requiresConfirmation()
             ->visible(fn(Product $record): bool => !$record->trashed() && filled($record->shopee_item_id) && filled($record->shopee_shop_id))
-            ->modalHeading('Hapus produk dari Shopee dan Bengawan?')
+            ->modalHeading('Hapus produk dari Shopee dan Web Internal?')
             ->modalDescription('Aksi ini akan menghapus item Shopee terlebih dahulu. Jika berhasil, produk internal juga akan dihapus.')
             ->action(function (Product $record) {
                 try {
@@ -592,7 +592,7 @@ class ProductsTable
                     $record->delete();
 
                     Notification::make()
-                        ->title('Produk berhasil dihapus dari Shopee dan Bengawan.')
+                        ->title('Produk berhasil dihapus dari Shopee dan Web Internal.')
                         ->success()
                         ->send();
                 } catch (\Throwable $e) {

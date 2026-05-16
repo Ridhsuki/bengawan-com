@@ -163,7 +163,7 @@ class ProductForm
                             ->afterStateUpdated(function (Set $set) {
                                 $set('shopee_model_id', 0);
                             })
-                            ->helperText('Pilih hanya jika ingin menghubungkan produk Bengawan ke produk Shopee yang sudah ada. Untuk publish produk baru, kosongkan.')
+                            ->helperText('Pilih hanya jika ingin menghubungkan produk internal ke produk Shopee yang sudah ada. Untuk publish produk baru, kosongkan.')
                             ->rules([
                                 function (Get $get, $record) {
                                     return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
@@ -178,7 +178,7 @@ class ProductForm
                                             ->exists();
 
                                         if ($exists) {
-                                            $fail('Item Shopee dan model ini sudah terhubung ke produk Bengawan lain. Pilih item/model lain.');
+                                            $fail('Item Shopee dan model ini sudah terhubung ke produk internal lain. Pilih item/model lain.');
                                         }
                                     };
                                 },
@@ -217,7 +217,7 @@ class ProductForm
                                             ->exists();
 
                                         if ($exists) {
-                                            $fail('Model Shopee ini sudah dipakai oleh produk Bengawan lain.');
+                                            $fail('Model Shopee ini sudah dipakai oleh produk internal lain.');
                                         }
                                     };
                                 },
