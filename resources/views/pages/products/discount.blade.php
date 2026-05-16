@@ -35,21 +35,25 @@
                         </div>
 
                         <div class="mt-auto flex items-end justify-center gap-6 px-2">
-                            <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank"
+                            <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank" rel="noopener noreferrer"
                                 class="flex flex-col items-center gap-1 group/icon">
-                                <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo"
+                                <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="whatsapp logo" loading="lazy"
                                     class="object-contain group-hover/icon:scale-110 transition">
                             </a>
-                            <a href="{{ $product->link_shopee }}" target="_blank"
-                                class="flex flex-col items-center gap-1 group/icon">
-                                <img src="{{ asset('assets/img/shopee.png') }}" alt="shopee logo"
-                                    class="object-contain group-hover/icon:scale-110 transition">
-                            </a>
-                            <a href="{{ $product->link_tokopedia }}" target="_blank"
-                                class="flex flex-col items-center gap-1 group/icon">
-                                <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="tokopedia logo"
-                                    class="object-contain group-hover/icon:scale-110 transition">
-                            </a>
+                            @if (!empty($product->link_shopee))
+                                <a href="{{ $product->link_shopee }}" target="_blank" rel="noopener noreferrer"
+                                    class="flex flex-col items-center gap-1 group/icon">
+                                    <img src="{{ asset('assets/img/shopee.png') }}" alt="shopee logo" loading="lazy"
+                                        class="object-contain group-hover/icon:scale-110 transition">
+                                </a>
+                            @endif
+                            @if (!empty($product->link_tokopedia))
+                                <a href="{{ $product->link_tokopedia }}" target="_blank" rel="noopener noreferrer"
+                                    class="flex flex-col items-center gap-1 group/icon">
+                                    <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="tokopedia logo"
+                                        loading="lazy" class="object-contain group-hover/icon:scale-110 transition">
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

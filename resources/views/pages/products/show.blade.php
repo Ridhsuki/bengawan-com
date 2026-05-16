@@ -66,21 +66,27 @@
                 </div>
 
                 <div class="flex gap-8 items-center">
-                    <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank"
+                    <a href="{{ $product->whatsapp_inquiry_link }}" target="_blank" rel="noopener noreferrer"
                         class="transform hover:scale-110 transition duration-300">
-                        <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="WhatsApp" class="h-12 md:h-16">
-                    </a>
-
-                    <a href="{{ $product->link_shopee }}"
-                        class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
-                        <img src="{{ asset('assets/img/shopee.png') }}" alt="Shopee" class="h-12 md:h-16">
-                    </a>
-
-                    <a href="{{ $product->link_tokopedia }}"
-                        class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
-                        <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="Tokopedia"
+                        <img src="{{ asset('assets/img/WhatsApp.png') }}" alt="WhatsApp" loading="lazy"
                             class="h-12 md:h-16">
                     </a>
+
+                    @if (!empty($product->link_shopee))
+                        <a href="{{ $product->link_shopee }}" target="_blank" rel="noopener noreferrer"
+                            class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
+                            <img src="{{ asset('assets/img/shopee.png') }}" alt="Shopee" loading="lazy"
+                                class="h-12 md:h-16">
+                        </a>
+                    @endif
+
+                    @if (!empty($product->link_tokopedia))
+                        <a href="{{ $product->link_tokopedia }}" target="_blank" rel="noopener noreferrer"
+                            class="flex flex-col items-center gap-1 group transform hover:scale-110 transition duration-300">
+                            <img src="{{ asset('assets/img/tokopedia-seeklogo.png') }}" alt="Tokopedia" loading="lazy"
+                                class="h-12 md:h-16">
+                        </a>
+                    @endif
                 </div>
             </div>
 
