@@ -17,9 +17,9 @@
                 <img src="{{ public_path('assets/img/about-logo.png') }}" alt="Logo" style="width: 200px">
             </td>
             <td class="company-info">
-                <h1 class="company-name">{{ $setting->company_name ?? 'Bengawan Komputer' }}</h1>
-                <p class="company-detail">{{ $setting->address ?? '-' }}</p>
-                <p class="company-detail">Telp: {{ $setting->phone ?? '-' }}</p>
+                <h1 class="company-name">{{ $setting?->company_name ?? 'Bengawan Komputer' }}</h1>
+                <p class="company-detail">{{ $setting?->address ?? '-' }}</p>
+                <p class="company-detail">Telp: {{ $setting?->phone ?? '-' }}</p>
             </td>
         </tr>
     </table>

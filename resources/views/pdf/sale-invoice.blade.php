@@ -44,10 +44,10 @@
                 <img src="{{ public_path('assets/img/about-logo.png') }}" alt="Logo" style="width: 200px">
             </td>
             <td class="company-info">
-                <h1 class="company-name">{{ $setting->company_name ?? 'Bengawan Computer' }}</h1>
-                <p class="company-detail">{{ $setting->address ?? '' }}</p>
-                @if (!empty($setting->phone ?? null))
-                    <p class="company-detail">Telp: {{ $setting->phone }}</p>
+                <h1 class="company-name">{{ $setting?->company_name ?? 'Bengawan Computer' }}</h1>
+                <p class="company-detail">{{ $setting?->address ?? '' }}</p>
+                @if (!empty($setting?->phone))
+                    <p class="company-detail">Telp: {{ $setting?->phone }}</p>
                 @endif
             </td>
         </tr>
