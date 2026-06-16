@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Sales;
 
 use App\Filament\Resources\Sales\Pages\ManageSales;
 use App\Models\Sale;
+use App\Actions\Sales\GenerateSaleInvoicePdf;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\DatePicker;
@@ -139,7 +141,19 @@ class SaleResource extends Resource
             ])
             ->defaultSort('transaction_date', 'desc')
             ->recordActions([
-                //
+                Action::make('generate_invoice')
+                    ->label('Buat Nota')
+                    ->icon('heroicon-o-document-text')
+                    ->color('info')
+                    ->action(function (Sale $record) {
+                        $pdf = (new GenerateSaleInvoicePdf())->execute($record);
+                        $output = $pdf->output();
+
+                        return response()->streamDownload(
+                            fn () => print($output),
+                            GenerateSaleInvoicePdf::filename($record)
+                        );
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

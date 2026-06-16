@@ -27,9 +27,13 @@ use App\Models\Sale;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Filament\Tables\Columns\ViewColumn;
+use App\Actions\Sales\GenerateSaleInvoicePdf;
 
 class ProductsTable
 {
@@ -413,9 +417,12 @@ class ProductsTable
                     ->stripCharacters('.')
                     ->required(),
 
-                TextInput::make('customer_info')
-                    ->label('Info Customer')
-                    ->placeholder('Nama Customer / No. WA')
+                Select::make('customer_info')
+                    ->label('Tipe Customer')
+                    ->options([
+                        'Umum' => 'Umum',
+                        'Bakul' => 'Bakul',
+                    ])
                     ->default('Umum')
                     ->required(),
 
@@ -423,6 +430,15 @@ class ProductsTable
                     ->label('Tanggal Transaksi')
                     ->native(false)
                     ->default(now())
+                    ->required(),
+
+                Radio::make('action_mode')
+                    ->label('Setelah catat')
+                    ->options([
+                        'record_only' => 'Catat saja',
+                        'record_and_invoice' => 'Catat dan buat nota PDF',
+                    ])
+                    ->default('record_only')
                     ->required(),
             ])
             ->action(function (Product $record, array $data) {
@@ -436,40 +452,76 @@ class ProductsTable
                     return;
                 }
 
-                if ($record->stock < $data['quantity']) {
+                $quantity = (int) $data['quantity'];
+                $negotiatedPrice = (float) $data['negotiated_price'];
+
+                if ($quantity < 1) {
                     Notification::make()
-                        ->title('Stok tidak cukup.')
+                        ->title('Jumlah minimal adalah 1.')
                         ->danger()
                         ->send();
 
                     return;
                 }
 
-                $cost = (float) $record->cost_price;
-                $sellingPrice = (float) $record->price;
-                $negotiatedPrice = (float) $data['negotiated_price'];
-                $quantity = (int) $data['quantity'];
+                if ($negotiatedPrice < 0) {
+                    Notification::make()
+                        ->title('Harga tidak boleh negatif.')
+                        ->danger()
+                        ->send();
 
-                Sale::create([
-                    'sales_channel' => 'internal',
-                    'product_id' => $record->id,
+                    return;
+                }
 
-                    'product_name_snapshot' => $record->name,
-                    'product_sku_snapshot' => $record->serial_number ?: $record->shopee_sku,
-                    'product_shopee_item_id_snapshot' => $record->shopee_item_id,
-                    'product_shopee_model_id_snapshot' => $record->shopee_model_id,
+                try {
+                    $sale = DB::transaction(function () use ($record, $data, $quantity, $negotiatedPrice) {
+                        $product = Product::query()
+                            ->whereKey($record->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
 
-                    'quantity' => $quantity,
-                    'cost_price' => $cost,
-                    'selling_price' => $sellingPrice,
-                    'negotiated_price' => $negotiatedPrice,
-                    'total_profit' => ($negotiatedPrice - $cost) * $quantity,
-                    'customer_info' => $data['customer_info'],
-                    'transaction_date' => $data['transaction_date'],
-                    'external_status' => 'completed',
-                ]);
+                        if ($product->stock < $quantity) {
+                            throw ValidationException::withMessages([
+                                'quantity' => "Stok tidak cukup. Sisa stok: {$product->stock}",
+                            ]);
+                        }
 
-                $record->decrement('stock', $quantity);
+                        $cost = (float) $product->cost_price;
+                        $sellingPrice = (float) $product->price;
+
+                        $sale = Sale::create([
+                            'sales_channel' => 'internal',
+                            'product_id' => $product->id,
+
+                            'product_name_snapshot' => $product->name,
+                            'product_sku_snapshot' => $product->serial_number ?: $product->shopee_sku,
+                            'product_shopee_item_id_snapshot' => $product->shopee_item_id,
+                            'product_shopee_model_id_snapshot' => $product->shopee_model_id,
+
+                            'quantity' => $quantity,
+                            'cost_price' => $cost,
+                            'selling_price' => $sellingPrice,
+                            'negotiated_price' => $negotiatedPrice,
+                            'total_profit' => ($negotiatedPrice - $cost) * $quantity,
+                            'customer_info' => $data['customer_info'],
+                            'transaction_date' => $data['transaction_date'],
+                            'external_status' => 'completed',
+                        ]);
+
+                        $product->decrement('stock', $quantity);
+
+                        return $sale;
+                    });
+                } catch (ValidationException $e) {
+                    Notification::make()
+                        ->title('Stok tidak cukup.')
+                        ->body(collect($e->errors())->flatten()->first())
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
                 $record->refresh();
 
                 if ($record->canSyncShopeeStock()) {
@@ -480,6 +532,16 @@ class ProductsTable
                     ->title('Penjualan berhasil dicatat.')
                     ->success()
                     ->send();
+
+                if ($data['action_mode'] === 'record_and_invoice') {
+                    $pdf = (new GenerateSaleInvoicePdf())->execute($sale);
+                    $output = $pdf->output();
+
+                    return response()->streamDownload(
+                        fn () => print($output),
+                        GenerateSaleInvoicePdf::filename($sale)
+                    );
+                }
             });
     }
 

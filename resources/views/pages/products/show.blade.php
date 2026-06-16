@@ -62,7 +62,11 @@
                 </div>
 
                 <div class="text-sm font-bold text-black mb-10">
-                    *stok terbatas
+                    @if ($product->stock > 0)
+                        ready stok : {{ $product->stock }}
+                    @else
+                        stok habis
+                    @endif
                 </div>
 
                 <div class="flex gap-8 items-center">
