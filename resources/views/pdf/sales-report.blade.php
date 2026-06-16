@@ -53,9 +53,15 @@
                     </td>
 
                     <td>
-                        <span class="font-bold">{{ $sale->product->name }}</span>
-                        @if ($sale->product->serial_number)
-                            <br><span class="text-sm">SN: {{ $sale->product->serial_number }}</span>
+                        @php
+                            $productName = $sale->product_name_snapshot
+                                ?: ($sale->product?->name ?? 'Produk sudah dihapus');
+                            $productSku = $sale->product_sku_snapshot
+                                ?: ($sale->product?->serial_number ?? null);
+                        @endphp
+                        <span class="font-bold">{{ $productName }}</span>
+                        @if ($productSku)
+                            <br><span class="text-sm">SN: {{ $productSku }}</span>
                         @endif
                     </td>
 
