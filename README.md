@@ -12,6 +12,54 @@ The Filament administration panel handles product and category management, stock
 
 ---
 
+## Demo
+
+<p align="center">
+      <!-- src="docs/assets/bengawan-computer-demo.gif" -->
+    <img
+      src="https://my-old-learning.netlify.app/img/ilya.png"
+      alt="Bengawan Computer application walkthrough"
+      width="889"
+    >
+</p>
+
+<p align="center">
+  <em>A short walkthrough of the public product catalog, Filament administration panel, and Shopee integration.</em>
+</p>
+
+### Application Preview
+
+<p align="center">
+    <!-- src="docs/assets/product-catalog.png" -->
+  <img
+    src="https://my-old-learning.netlify.app/img/ilya.png"
+    alt="Public laptop product catalog"
+    width="48%"
+  >
+    <!-- src="docs/assets/product-detail.png" -->
+  <img
+    src="https://my-old-learning.netlify.app/img/ilya.png"
+    alt="Laptop product detail page"
+    width="48%"
+  >
+</p>
+
+<p align="center">
+    <!-- src="docs/assets/admin-dashboard.png" -->
+  <img
+    src="https://my-old-learning.netlify.app/img/ilya.png"
+    alt="Filament administration dashboard"
+    width="48%"
+  >
+    <!-- src="docs/assets/shopee-integration.png" -->
+  <img
+    src="https://my-old-learning.netlify.app/img/ilya.png"
+    alt="Shopee marketplace integration page"
+    width="48%"
+  >
+</p>
+
+---
 ## Key Features
 
 **Public catalog**
