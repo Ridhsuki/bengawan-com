@@ -15,11 +15,7 @@ The Filament administration panel handles product and category management, stock
 ## Demo
 
 <p align="center">
-    <img
-      src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/bengawan-computer-demo.gif"
-      alt="Bengawan Computer application walkthrough"
-      width="889"
-    >
+     <img src="public/assets/img/bengawan-computer-demo.gif" alt="Bengawan Computer application walkthrough" width="900">
 </p>
 
 <p align="center">
