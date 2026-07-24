@@ -15,9 +15,8 @@ The Filament administration panel handles product and category management, stock
 ## Demo
 
 <p align="center">
-      <!-- src="docs/assets/bengawan-computer-demo.gif" -->
     <img
-      src="https://my-old-learning.netlify.app/img/ilya.png"
+      src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/bengawan-computer-demo.gif"
       alt="Bengawan Computer application walkthrough"
       width="889"
     >
@@ -30,30 +29,26 @@ The Filament administration panel handles product and category management, stock
 ### Application Preview
 
 <p align="center">
-    <!-- src="docs/assets/product-catalog.png" -->
   <img
-    src="https://my-old-learning.netlify.app/img/ilya.png"
+    src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/product-catalog.png"
     alt="Public laptop product catalog"
     width="48%"
   >
-    <!-- src="docs/assets/product-detail.png" -->
   <img
-    src="https://my-old-learning.netlify.app/img/ilya.png"
+    src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/product-detail.png"
     alt="Laptop product detail page"
     width="48%"
   >
 </p>
 
 <p align="center">
-    <!-- src="docs/assets/admin-dashboard.png" -->
   <img
-    src="https://my-old-learning.netlify.app/img/ilya.png"
+    src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/admin-dashboard.png"
     alt="Filament administration dashboard"
     width="48%"
   >
-    <!-- src="docs/assets/shopee-integration.png" -->
   <img
-    src="https://my-old-learning.netlify.app/img/ilya.png"
+    src="https://onlinekan.netlify.app/archive/z-save-image-gh/bengawan-komputer-assets/shopee-integration.png"
     alt="Shopee marketplace integration page"
     width="48%"
   >
